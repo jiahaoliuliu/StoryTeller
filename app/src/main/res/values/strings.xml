@@ -10,5 +10,10 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="welcome_screen">Welcome to Story Teller, where the story of everyone is heard.\n\nPlease login with your facebook account</string>
     <string name="login_with_facebook_button">Login with Facebook</string>
+    <string name="error_linking">Some error happens. Could you try to login with Facebook again</string>
+    <!-- Main screen -->
+    <string name="logout_button">Logout</string>
+
+
 
 </resources>
