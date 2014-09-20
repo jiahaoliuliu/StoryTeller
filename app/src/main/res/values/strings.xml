@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">StoryTeller</string>
+    <string name="app_name">Story Teller</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="facebook_app_id">694655097271131</string>
+
+    <!-- Login screen -->
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="welcome_screen">Welcome to Story Teller, where the story of everyone is heard.\n\nPlease login with your facebook account</string>
+    <string name="login_with_facebook_button">Login with Facebook</string>
 
 </resources>
