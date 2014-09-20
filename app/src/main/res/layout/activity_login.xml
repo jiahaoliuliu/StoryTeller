@@ -28,7 +28,7 @@
         />
 
     <Button
-        android:id="@+id/login_with_facebook_button"
+        android:id="@+id/facebook_login_button"
         android:text="@string/login_with_facebook_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
