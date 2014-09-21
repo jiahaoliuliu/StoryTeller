@@ -20,7 +20,6 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
         OnSessionRequestedListener, OnSetProgressBarIndeterminateRequested {
 
     private static final String TAG = "BaseSessionActivity";
-
     Session mSession;
 
     @Override

@@ -15,4 +15,9 @@
     <string name="logout_button">Logout</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- Drawer -->
+    <string name="drawer_open">Drawer open</string>
+    <string name="drawer_close">Drawer closed</string>
+
+
 </resources>
