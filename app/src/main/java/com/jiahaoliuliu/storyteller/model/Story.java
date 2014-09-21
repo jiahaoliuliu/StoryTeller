@@ -1,5 +1,9 @@
 package com.jiahaoliuliu.storyteller.model;
 
+import android.text.TextUtils;
+
+import com.parse.ParseObject;
+
 /**
  * Story is a model which contains two fields: Title and content. It also contains the key of both
  * fields as public static variable
@@ -28,6 +32,20 @@ public class Story {
 
     public Story(String title, String content) {
         this.title = title;
+        this.content = content;
+    }
+
+    public Story(ParseObject parseObject) {
+        String title = parseObject.getString(TITLE_KEY);
+        if (TextUtils.isEmpty(title)) {
+            throw new IllegalArgumentException("The parse object must has the title");
+        }
+        this.title = title;
+
+        String content = parseObject.getString(CONTENT_KEY);
+        if (TextUtils.isEmpty(content)) {
+            throw new IllegalArgumentException("The parse object must has the content");
+        }
         this.content = content;
     }
 

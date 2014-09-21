@@ -7,11 +7,13 @@
     >
 
     <com.etsy.android.grid.StaggeredGridView
-        android:id="@+id/staggered_grid_view"
+        android:id="@+id/stories_grid_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:item_margin="8dp"
-        app:column_count="@integer/staggered_grid_view_columns" />
+        app:column_count="@integer/staggered_grid_view_columns"
+        android:background="@android:color/darker_gray"
+        />
 
     <!-- the left drawer -->
     <!-- For not it is hidden

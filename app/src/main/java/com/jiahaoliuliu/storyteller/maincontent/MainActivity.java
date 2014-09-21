@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.model.Story;
 import com.parse.FindCallback;
@@ -18,6 +19,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,18 +28,28 @@ public class MainActivity extends BaseSessionActivity {
     private static final String TAG = "MainActivity";
 
     private static final int MENU_ITEM_RIGHT_LIST_ID = 10000;
+
+    // Content and layouts
+    private StaggeredGridView mStoriesGridView;
+    private StoriesAdapter mStoriesAdapter;
+    private RightFragment mRightFragment;
+
+    // Drawers
     private DrawerLayout mDrawerLayout;
     private FrameLayout mRightFrameLayout;
-    private RightFragment mRightFragment;
     private FragmentManager mFragmentManager;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    // Internal data
+    private List<Story> mAllStories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        
+        mStoriesGridView = (StaggeredGridView)findViewById(R.id.stories_grid_view);
+
         mFragmentManager = getSupportFragmentManager();
         mRightFragment = new RightFragment();
         mFragmentManager.beginTransaction().add(R.id.drawer_right_frame_layout, mRightFragment).commit();
@@ -62,16 +74,26 @@ public class MainActivity extends BaseSessionActivity {
 
         // Trying to querying data
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Story.STORY_KEY);
+        setProgressBarIndeterminate(true);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if (parseObjects != null) {
                     Log.v(TAG, "Stories retrieved from the parse");
+                    mAllStories = new ArrayList<Story>();
                     for (ParseObject parseObject: parseObjects) {
-                        String title = parseObject.getString(Story.TITLE_KEY);
-                        String content = parseObject.getString(Story.CONTENT_KEY);
-                        Log.v(TAG, title + " " + content);
+                        try {
+                            Story tmpStory = new Story(parseObject);
+                            Log.v(TAG, tmpStory.toString());
+                            mAllStories.add(tmpStory);
+                        } catch (IllegalArgumentException illegalArgumentException) {
+                            Log.w(TAG, "Error getting stories from the Parse ", illegalArgumentException);
+                        }
                     }
+
+                    mStoriesAdapter = new StoriesAdapter(MainActivity.this, mAllStories);
+                    mStoriesGridView.setAdapter(mStoriesAdapter);
+                    setProgressBarIndeterminate(false);
                 }
             }
         });
