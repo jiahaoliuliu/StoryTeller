@@ -1,4 +1,4 @@
-package com.jiahaoliuliu.storyteller;
+package com.jiahaoliuliu.storyteller.maincontent;
 
 
 import android.content.Intent;
@@ -9,10 +9,15 @@ import android.util.Log;
 import android.view.Window;
 
 import com.facebook.Session;
+import com.jiahaoliuliu.storyteller.LoginActivity;
+import com.jiahaoliuliu.storyteller.interfaces.OnExitRequestedListener;
+import com.jiahaoliuliu.storyteller.interfaces.OnSessionRequestedListener;
+import com.jiahaoliuliu.storyteller.interfaces.OnSetProgressBarIndeterminateRequested;
 import com.parse.ParseFacebookUtils;
 
 
-public class BaseSessionActivity extends ActionBarActivity {
+public class BaseSessionActivity extends ActionBarActivity implements OnExitRequestedListener,
+        OnSessionRequestedListener, OnSetProgressBarIndeterminateRequested {
 
     private static final String TAG = "BaseSessionActivity";
 
@@ -42,4 +47,24 @@ public class BaseSessionActivity extends ActionBarActivity {
         startActivity(backToLoginActivityIntent);
         finish();
     }
+
+    @Override
+    public void requestExit() {
+        // Close the actual session if it has not been closed before
+        if (mSession != null && mSession.isOpened()) {
+            mSession.closeAndClearTokenInformation();
+        }
+        backToLoginActivity();
+    }
+
+    @Override
+    public Session requestSession() {
+        return mSession;
+    }
+
+    @Override
+    public void setProgressBar(boolean setProgressBarIndeterminate) {
+        setProgressBarIndeterminate(setProgressBarIndeterminate);
+    }
+
 }
