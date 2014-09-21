@@ -8,6 +8,11 @@ package com.jiahaoliuliu.storyteller.model;
 public class Story {
 
     /**
+     * The key for the story. This will be the name of the table in the background (for now Parse)
+     */
+    public static final String STORY_KEY = "Story";
+
+    /**
      * The key for the title of the story. The title cannot be null
      */
     public static final String TITLE_KEY = "Title";

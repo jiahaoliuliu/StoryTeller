@@ -9,6 +9,13 @@ import android.widget.TextView;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.model.GraphUser;
+import com.jiahaoliuliu.storyteller.model.Story;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.List;
 
 
 public class MainActivity extends BaseSessionActivity {
@@ -41,6 +48,22 @@ public class MainActivity extends BaseSessionActivity {
                 setProgressBarIndeterminate(false);
             }
         }).executeAsync();
+
+        // Trying to querying data
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(Story.STORY_KEY);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (parseObjects != null) {
+                    Log.v(TAG, "Stories retrieved from the parse");
+                    for (ParseObject parseObject: parseObjects) {
+                        String title = parseObject.getString(Story.TITLE_KEY);
+                        String content = parseObject.getString(Story.CONTENT_KEY);
+                        Log.v(TAG, title + " " + content);
+                    }
+                }
+            }
+        });
     }
 
     private View.OnClickListener onclickListener = new View.OnClickListener() {
