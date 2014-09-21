@@ -2,6 +2,7 @@ package com.jiahaoliuliu.storyteller;
 
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -20,6 +21,7 @@ public class BaseSessionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        requestWindowFeature(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // First of all check if the user has logged in
         mSession = ParseFacebookUtils.getSession();
         if (mSession == null || !mSession.isOpened()) {
