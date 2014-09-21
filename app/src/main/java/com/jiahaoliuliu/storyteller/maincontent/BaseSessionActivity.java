@@ -2,7 +2,6 @@ package com.jiahaoliuliu.storyteller.maincontent;
 
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -26,7 +25,6 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         // First of all check if the user has logged in
         mSession = ParseFacebookUtils.getSession();
