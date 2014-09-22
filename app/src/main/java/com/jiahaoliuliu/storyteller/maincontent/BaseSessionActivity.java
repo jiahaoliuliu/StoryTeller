@@ -13,6 +13,7 @@ import com.jiahaoliuliu.storyteller.interfaces.OnExitRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSessionRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSetProgressBarIndeterminateRequested;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseUser;
 
 
 public class BaseSessionActivity extends ActionBarActivity implements OnExitRequestedListener,
@@ -51,6 +52,7 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
         if (mSession != null && mSession.isOpened()) {
             mSession.closeAndClearTokenInformation();
         }
+        ParseUser.logOut();
         backToLoginActivity();
     }
 
