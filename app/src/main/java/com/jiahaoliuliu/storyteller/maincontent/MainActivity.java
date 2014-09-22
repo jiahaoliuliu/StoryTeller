@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.jiahaoliuliu.storyteller.R;
+import com.jiahaoliuliu.storyteller.database.StoryDataLayer;
 import com.jiahaoliuliu.storyteller.model.Story;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -81,11 +82,13 @@ public class MainActivity extends BaseSessionActivity {
                 if (parseObjects != null) {
                     Log.v(TAG, "Stories retrieved from the parse");
                     mAllStories = new ArrayList<Story>();
+                    StoryDataLayer storyDataLayer = StoryDataLayer.getInstance();
                     for (ParseObject parseObject: parseObjects) {
                         try {
                             Story tmpStory = new Story(parseObject);
                             Log.v(TAG, tmpStory.toString());
                             mAllStories.add(tmpStory);
+                            storyDataLayer.insertStory(tmpStory);
                         } catch (IllegalArgumentException illegalArgumentException) {
                             Log.w(TAG, "Error getting stories from the Parse ", illegalArgumentException);
                         }
@@ -118,7 +121,6 @@ public class MainActivity extends BaseSessionActivity {
             }
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
