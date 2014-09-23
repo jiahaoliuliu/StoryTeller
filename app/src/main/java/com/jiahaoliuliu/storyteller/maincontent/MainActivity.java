@@ -125,13 +125,17 @@ public class MainActivity extends BaseSessionActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == MENU_ITEM_RIGHT_LIST_ID) {
-            if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
-                mDrawerLayout.closeDrawer(mRightFrameLayout);
-            } else {
-                mDrawerLayout.openDrawer(mRightFrameLayout);
-            }
-            return true;
+        switch (item.getItemId()) {
+            case MENU_ITEM_RIGHT_LIST_ID :
+                if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
+                    mDrawerLayout.closeDrawer(mRightFrameLayout);
+                } else {
+                    mDrawerLayout.openDrawer(mRightFrameLayout);
+                }
+                return true;
+            case MENU_ITEM_SEARCH_ID:
+                // Go to search activity
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
