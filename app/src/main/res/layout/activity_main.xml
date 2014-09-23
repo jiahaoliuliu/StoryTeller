@@ -1,14 +1,18 @@
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-    <FrameLayout
-        android:id="@+id/main_content_frame_layout"
+    <com.etsy.android.grid.StaggeredGridView
+        android:id="@+id/stories_grid_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:item_margin="8dp"
+        app:column_count="@integer/staggered_grid_view_columns"
+        android:background="@android:color/darker_gray"
         />
 
     <!-- the left drawer -->

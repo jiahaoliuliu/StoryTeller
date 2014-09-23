@@ -9,6 +9,7 @@ import android.view.Window;
 
 import com.facebook.Session;
 import com.jiahaoliuliu.storyteller.LoginActivity;
+import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.interfaces.OnExitRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSessionRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSetProgressBarIndeterminateRequested;
@@ -53,6 +54,9 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
             mSession.closeAndClearTokenInformation();
         }
         ParseUser.logOut();
+
+        // Remove database
+        MainDatabase.deleteTablesContent();
         backToLoginActivity();
     }
 
