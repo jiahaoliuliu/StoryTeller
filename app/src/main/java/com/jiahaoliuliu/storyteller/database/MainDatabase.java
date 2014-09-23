@@ -78,6 +78,11 @@ public class MainDatabase {
         public static final String DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
+    public static void deleteTablesContent() {
+        SQLiteDatabase sqLiteDatabase = SingletonHolder.INSTANCE.getWritableDatabase();
+        sqLiteDatabase.execSQL("delete from " + TableStory.TABLE_NAME);
+    }
+
     public static class OpenDbHelper extends SQLiteOpenHelper {
         private OpenDbHelper(Context context) {
             super(context, DB_NAME, null, VERSION);
@@ -85,7 +90,7 @@ public class MainDatabase {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(TableStory.CREATE);
+            createTables(db);
         }
 
         @Override
@@ -100,7 +105,13 @@ public class MainDatabase {
         @Override
         public void onOpen(SQLiteDatabase db) {
             super.onOpen(db);
+            // Create the tables if they not exists
+            createTables(db);
             db.execSQL("PRAGMA foreign_keys=ON;");
+        }
+
+        private void createTables(SQLiteDatabase db) {
+            db.execSQL(TableStory.CREATE);
         }
     }
 }
