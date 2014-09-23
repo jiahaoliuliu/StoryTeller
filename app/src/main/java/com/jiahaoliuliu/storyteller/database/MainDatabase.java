@@ -50,7 +50,7 @@ public class MainDatabase {
          * The unique id of the story. This data is retrieved from parse, which ensures that
          * the combination of this id and the class name is unique across the app.
          */
-        public static final String _ID = "Id";
+        public static final String _ID = "_id";
 
         /**
          * The title of the story.
