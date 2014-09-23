@@ -97,7 +97,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
 
         // Trying to querying data
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Story.STORY_KEY);
-        setProgressBarIndeterminate(true);
+        setSupportProgressBarIndeterminateVisibility(true);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -119,7 +119,6 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                     }
                 }
                 getSupportLoaderManager().initLoader(LOADER_ID, null, MainActivity.this);
-                setProgressBarIndeterminate(false);
             }
         });
     }
@@ -217,6 +216,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                 return StoryDataLayer.getInstance().searchStoryByText(constraint.toString());
             }
         });
+        setSupportProgressBarIndeterminateVisibility(false);
     }
 
     @Override

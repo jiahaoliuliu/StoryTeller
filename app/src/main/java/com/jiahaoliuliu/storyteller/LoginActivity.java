@@ -44,7 +44,7 @@ public class LoginActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 // Show the indeterminate progress bar
-                setProgressBarIndeterminate(true);
+                setSupportProgressBarIndeterminateVisibility(true);
                 // Disable the button
                 mFacebookLoginButton.setEnabled(false);
                 ParseFacebookUtils.logIn(LoginActivity.this, new LogInCallback() {
@@ -74,7 +74,7 @@ public class LoginActivity extends ActionBarActivity {
                             Log.e(TAG, "Error on requesting facebook authorization", e);
                         }
                         // Hide the indeterminate progress bar
-                        setProgressBarIndeterminate(false);
+                        setSupportProgressBarIndeterminateVisibility(false);
                         mFacebookLoginButton.setEnabled(true);
                     }
                 });
