@@ -90,7 +90,7 @@ public class MainDatabase {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            createTables(db);
+            createTablesIfNeeded(db);
         }
 
         @Override
@@ -106,11 +106,11 @@ public class MainDatabase {
         public void onOpen(SQLiteDatabase db) {
             super.onOpen(db);
             // Create the tables if they not exists
-            createTables(db);
+            createTablesIfNeeded(db);
             db.execSQL("PRAGMA foreign_keys=ON;");
         }
 
-        private void createTables(SQLiteDatabase db) {
+        private void createTablesIfNeeded(SQLiteDatabase db) {
             db.execSQL(TableStory.CREATE);
         }
     }
