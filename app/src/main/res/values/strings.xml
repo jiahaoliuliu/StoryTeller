@@ -18,6 +18,10 @@
     <string name="story_title">Title</string>
     <string name="story_content">Content</string>
 
+    <!-- Main screen Action bar -->
+    <string name="action_bar_right_drawer">Right drawer</string>
+    <string name="action_bar_search">Search</string>
+
     <!-- Drawer -->
     <string name="drawer_open">Drawer open</string>
     <string name="drawer_close">Drawer closed</string>

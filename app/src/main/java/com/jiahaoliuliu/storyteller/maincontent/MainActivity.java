@@ -29,6 +29,7 @@ public class MainActivity extends BaseSessionActivity {
     private static final String TAG = "MainActivity";
 
     private static final int MENU_ITEM_RIGHT_LIST_ID = 10000;
+    private static final int MENU_ITEM_SEARCH_ID = 10001;
 
     // Content and layouts
     private StaggeredGridView mStoriesGridView;
@@ -88,6 +89,8 @@ public class MainActivity extends BaseSessionActivity {
                             Story tmpStory = new Story(parseObject);
                             Log.v(TAG, tmpStory.toString());
                             mAllStories.add(tmpStory);
+                            // Save the data persistently to be used for specific situations
+                            // such as search or off-line mode
                             storyDataLayer.insertOrUpdateStory(tmpStory);
                         } catch (IllegalArgumentException illegalArgumentException) {
                             Log.w(TAG, "Error getting stories from the Parse ", illegalArgumentException);
@@ -104,10 +107,19 @@ public class MainActivity extends BaseSessionActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, MENU_ITEM_RIGHT_LIST_ID, Menu
-                .NONE, "R.List")
-                .setIcon(R.drawable.ic_navigation_drawer)
+
+        menu.add(Menu.NONE, MENU_ITEM_SEARCH_ID, Menu
+                .NONE, R.string.action_bar_search)
+                .setIcon(R.drawable.ic_action_search)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+        // The icon to open the right drawer. This icon
+        // must be shown always, and it must be placed
+        // on the rightest place of the action bar
+        menu.add(Menu.NONE, MENU_ITEM_RIGHT_LIST_ID, Menu
+                .NONE, R.string.action_bar_right_drawer)
+                .setIcon(R.drawable.ic_navigation_drawer)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return true;
     }
 
