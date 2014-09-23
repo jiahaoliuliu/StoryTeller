@@ -1,6 +1,5 @@
 package com.jiahaoliuliu.storyteller.maincontent;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
@@ -112,7 +111,9 @@ public class MainActivity extends BaseSessionActivity {
         menu.add(Menu.NONE, MENU_ITEM_SEARCH_ID, Menu
                 .NONE, R.string.action_bar_search)
                 .setIcon(R.drawable.ic_action_search)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                .setActionView(R.layout.search_layout)
+                .setShowAsAction
+                        (MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
         // The icon to open the right drawer. This icon
         // must be shown always, and it must be placed
@@ -120,7 +121,7 @@ public class MainActivity extends BaseSessionActivity {
         menu.add(Menu.NONE, MENU_ITEM_RIGHT_LIST_ID, Menu
                 .NONE, R.string.action_bar_right_drawer)
                 .setIcon(R.drawable.ic_navigation_drawer)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS );
         return true;
     }
 
@@ -133,11 +134,6 @@ public class MainActivity extends BaseSessionActivity {
                 } else {
                     mDrawerLayout.openDrawer(mRightFrameLayout);
                 }
-                return true;
-            case MENU_ITEM_SEARCH_ID:
-                // Go to search activity
-                Intent startSearchActivityIntent = new Intent(MainActivity.this, SearchActivity.class);
-                startActivity(startSearchActivityIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
