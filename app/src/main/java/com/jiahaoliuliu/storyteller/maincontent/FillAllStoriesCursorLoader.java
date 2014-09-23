@@ -9,9 +9,9 @@ import com.jiahaoliuliu.storyteller.utils.SimpleCursorLoader;
 /**
  * Created by jliu on 23/09/14.
  */
-public class SearchCursorLoader extends SimpleCursorLoader {
+public class FillAllStoriesCursorLoader extends SimpleCursorLoader {
 
-    public SearchCursorLoader(Context context) {
+    public FillAllStoriesCursorLoader(Context context) {
         super(context);
     }
 

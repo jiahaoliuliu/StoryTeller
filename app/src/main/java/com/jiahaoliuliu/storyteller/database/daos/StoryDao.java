@@ -3,6 +3,7 @@ package com.jiahaoliuliu.storyteller.database.daos;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
@@ -28,9 +29,8 @@ public class StoryDao {
      * @return The cursor which contains all the stories of the database
      */
     public Cursor queryAllStories() {
-        return mDatabase.query(TableStory.TABLE_NAME, null, null, null, null, null, null);
+        return mDatabase.query(TableStory.TABLE_NAME, TableStory.COLUMNS, null, null, null, null, null);
     }
-
 
     public boolean insertOrUpdateStory(Story story) {
         if (story == null) {
@@ -85,5 +85,15 @@ public class StoryDao {
         contentValues.put(TableStory.TITLE, story.getTitle());
         contentValues.put(TableStory.CONTENT, story.getContent());
         return contentValues;
+    }
+
+    public Cursor searchStoryByText(String textToSearch) {
+        if (TextUtils.isEmpty(textToSearch)) {
+            return queryAllStories();
+        } else {
+            return mDatabase.query(true, TableStory.TABLE_NAME, TableStory.COLUMNS,
+                    TableStory.CONTENT + " like '%" + textToSearch + "%'", null,  null, null, null, null);
+
+        }
     }
 }
