@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -28,7 +29,7 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_login);
 
         // Check if the user has already authorized the from Facebook
@@ -42,6 +43,10 @@ public class LoginActivity extends ActionBarActivity {
         mFacebookLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Show the indeterminate progress bar
+                setProgressBarIndeterminate(true);
+                // Disable the button
+                mFacebookLoginButton.setEnabled(false);
                 ParseFacebookUtils.logIn(LoginActivity.this, new LogInCallback() {
                     @Override
                     public void done(final ParseUser parseUser, ParseException e) {
@@ -68,6 +73,9 @@ public class LoginActivity extends ActionBarActivity {
                         } else {
                             Log.e(TAG, "Error on requesting facebook authorization", e);
                         }
+                        // Hide the indeterminate progress bar
+                        setProgressBarIndeterminate(false);
+                        mFacebookLoginButton.setEnabled(true);
                     }
                 });
             }
