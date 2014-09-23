@@ -1,5 +1,6 @@
 package com.jiahaoliuliu.storyteller.maincontent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
@@ -135,6 +136,8 @@ public class MainActivity extends BaseSessionActivity {
                 return true;
             case MENU_ITEM_SEARCH_ID:
                 // Go to search activity
+                Intent startSearchActivityIntent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(startSearchActivityIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
