@@ -29,8 +29,8 @@ public class StoryDataLayer {
         return mStoryDao.queryAllStories();
     }
 
-    public boolean insertStory(Story story) {
-        Log.v(TAG, "Inserting the story " + story);
-        return mStoryDao.insertStory(story);
+    public boolean insertOrUpdateStory(Story story) {
+        Log.v(TAG, "Inserting or updating the story " + story);
+        return mStoryDao.insertOrUpdateStory(story);
     }
 }

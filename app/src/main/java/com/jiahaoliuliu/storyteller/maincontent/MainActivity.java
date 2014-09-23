@@ -88,7 +88,7 @@ public class MainActivity extends BaseSessionActivity {
                             Story tmpStory = new Story(parseObject);
                             Log.v(TAG, tmpStory.toString());
                             mAllStories.add(tmpStory);
-                            storyDataLayer.insertStory(tmpStory);
+                            storyDataLayer.insertOrUpdateStory(tmpStory);
                         } catch (IllegalArgumentException illegalArgumentException) {
                             Log.w(TAG, "Error getting stories from the Parse ", illegalArgumentException);
                         }
@@ -96,8 +96,8 @@ public class MainActivity extends BaseSessionActivity {
 
                     mStoriesAdapter = new StoriesAdapter(MainActivity.this, mAllStories);
                     mStoriesGridView.setAdapter(mStoriesAdapter);
-                    setProgressBarIndeterminate(false);
                 }
+                setProgressBarIndeterminate(false);
             }
         });
     }
