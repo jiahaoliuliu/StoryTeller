@@ -2,8 +2,8 @@ package com.jiahaoliuliu.storyteller.database.daos;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
@@ -29,14 +29,14 @@ public class StoryDao {
      * @return The cursor which contains all the stories of the database
      */
     public Cursor queryAllStories() {
-        return mDatabase.query(TableStory.TABLE_NAME, null, null, null, null, null, null);
+        return mDatabase.query(TableStory.TABLE_NAME, TableStory.COLUMNS, null, null, null, null, null);
     }
-
 
     public boolean insertOrUpdateStory(Story story) {
         if (story == null) {
             throw new IllegalArgumentException("Trying to insert or update a story while the story is null");
         }
+        Log.v(TAG, "Trying to insert or update the story");
 
         boolean result = false;
         mDatabase.beginTransaction();
@@ -49,7 +49,7 @@ public class StoryDao {
 
             mDatabase.setTransactionSuccessful();
         } catch (SQLException sqlException) {
-            Log.e(TAG, "Error inserting the story into the database");
+            Log.e(TAG, "Error inserting the story into the database", sqlException);
         } finally {
             mDatabase.endTransaction();
             return result;
@@ -57,8 +57,10 @@ public class StoryDao {
     }
 
     private boolean existStory(String storyId) {
-        return DatabaseUtils.queryNumEntries(mDatabase, TableStory.TABLE_NAME,
-                TableStory._ID + "=?", new String[] {storyId}) != 0;
+        Log.v(TAG, "Checking if the story exists");
+        Cursor cursor = mDatabase.query(TableStory.TABLE_NAME, null, TableStory._ID +
+        "=?", new String[] {storyId}, null, null, null, null);
+        return (cursor != null && cursor.getCount() > 0);
     }
 
     /**
@@ -73,7 +75,7 @@ public class StoryDao {
 
     private int updateStory(Story story) throws SQLException {
         ContentValues contentValues = createContentValues(story);
-        return (mDatabase.update(TableStory.TABLE_NAME, contentValues, TableStory._ID + "?=",
+        return (mDatabase.update(TableStory.TABLE_NAME, contentValues, TableStory._ID + "=?",
                 new String[] {story.get_id()}));
     }
 
@@ -83,5 +85,15 @@ public class StoryDao {
         contentValues.put(TableStory.TITLE, story.getTitle());
         contentValues.put(TableStory.CONTENT, story.getContent());
         return contentValues;
+    }
+
+    public Cursor searchStoryByText(String textToSearch) {
+        if (TextUtils.isEmpty(textToSearch)) {
+            return queryAllStories();
+        } else {
+            return mDatabase.query(true, TableStory.TABLE_NAME, TableStory.COLUMNS,
+                    TableStory.CONTENT + " like '%" + textToSearch + "%'", null,  null, null, null, null);
+
+        }
     }
 }

@@ -33,4 +33,8 @@ public class StoryDataLayer {
         Log.v(TAG, "Inserting or updating the story " + story);
         return mStoryDao.insertOrUpdateStory(story);
     }
-}
+
+    public Cursor searchStoryByText(String textToSearch) {
+        return mStoryDao.searchStoryByText(textToSearch);
+    }
+ }

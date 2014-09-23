@@ -50,7 +50,7 @@ public class MainDatabase {
          * The unique id of the story. This data is retrieved from parse, which ensures that
          * the combination of this id and the class name is unique across the app.
          */
-        public static final String _ID = "Id";
+        public static final String _ID = "_id";
 
         /**
          * The title of the story.
@@ -67,13 +67,16 @@ public class MainDatabase {
                 TITLE + " TEXT NOT NULL, " +
                 CONTENT + " TEXT NOT NULL " +
                 ");";
+
+        public static final String[] COLUMNS = {_ID, TITLE, CONTENT};
+
         /**
-         * The list of columns of this table. Note that the column id is not included because
-         * this list is going to be use used along with the SimpleCursorAdapter, which maps
-         * each column with the text or image to be shown. Since the id is not going to be shown
-         * there is not sense to include its columns in the list
+         * The list of columns of this table whom are going to be shown. Note that the column id is
+         * not included because this list is going to be use used along with the SimpleCursorAdapter,
+         * which maps each column with the text or image to be shown. Since the id is not going to be
+         * shown there is not sense to include its columns in the list
          */
-        public static final String[] COLUMNS = {TITLE, CONTENT};
+        public static final String[] COLUMNS_SHOWN = {TITLE, CONTENT};
 
         public static final String DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
