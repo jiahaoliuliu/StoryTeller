@@ -2,7 +2,6 @@ package com.jiahaoliuliu.storyteller.database.daos;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -37,6 +36,7 @@ public class StoryDao {
         if (story == null) {
             throw new IllegalArgumentException("Trying to insert or update a story while the story is null");
         }
+        Log.v(TAG, "Trying to insert or update the story");
 
         boolean result = false;
         mDatabase.beginTransaction();
@@ -49,7 +49,7 @@ public class StoryDao {
 
             mDatabase.setTransactionSuccessful();
         } catch (SQLException sqlException) {
-            Log.e(TAG, "Error inserting the story into the database");
+            Log.e(TAG, "Error inserting the story into the database", sqlException);
         } finally {
             mDatabase.endTransaction();
             return result;
@@ -57,8 +57,10 @@ public class StoryDao {
     }
 
     private boolean existStory(String storyId) {
-        return DatabaseUtils.queryNumEntries(mDatabase, TableStory.TABLE_NAME,
-                TableStory._ID + "=?", new String[] {storyId}) != 0;
+        Log.v(TAG, "Checking if the story exists");
+        Cursor cursor = mDatabase.query(TableStory.TABLE_NAME, null, TableStory._ID +
+        "=?", new String[] {storyId}, null, null, null, null);
+        return (cursor != null && cursor.getCount() > 0);
     }
 
     /**
@@ -73,7 +75,7 @@ public class StoryDao {
 
     private int updateStory(Story story) throws SQLException {
         ContentValues contentValues = createContentValues(story);
-        return (mDatabase.update(TableStory.TABLE_NAME, contentValues, TableStory._ID + "?=",
+        return (mDatabase.update(TableStory.TABLE_NAME, contentValues, TableStory._ID + "=?",
                 new String[] {story.get_id()}));
     }
 
