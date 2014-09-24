@@ -69,7 +69,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
     private List<Story> mAllStories;
 
     // System
-    private InputMethodManager imm;
+    private InputMethodManager mImm;
 
     // The menu for the action bar
     private Menu mMenu;
@@ -79,7 +79,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         mStoriesGridView = (StaggeredGridView)findViewById(R.id.stories_grid_view);
 
@@ -108,7 +108,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                 }
                 addActionBarMenuItems();
                 // Close the soft keyboard in case it is open
-                imm.hideSoftInputFromWindow(mLeftFrameLayout.getWindowToken(), 0);
+                mImm.hideSoftInputFromWindow(mLeftFrameLayout.getWindowToken(), 0);
             }
 
             @Override
@@ -260,7 +260,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 searchEditText.requestFocus();
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                mImm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 // Remove all the other items in the menu
                 mMenu.removeItem(MENU_ITEM_RIGHT_DRAWER_ID);
                 mMenu.removeItem(MENU_ITEM_NEW_STORY_ID);
@@ -271,7 +271,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 searchEditText.setText("");
                 searchEditText.clearFocus();
-                imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                mImm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
                 addActionBarMenuItems();
                 return true;
             }

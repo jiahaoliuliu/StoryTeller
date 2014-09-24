@@ -1,69 +1,43 @@
 package com.jiahaoliuliu.storyteller.maincontent;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.jiahaoliuliu.storyteller.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link LeftFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
  */
 public class LeftFragment extends Fragment {
     private static final String TAG = "LeftFragment";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LeftFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static LeftFragment newInstance(String param1, String param2) {
-        LeftFragment fragment = new LeftFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-    public LeftFragment() {
-        // Required empty public constructor
-    }
+    private EditText titleEditText;
+    private EditText contentEditText;
+    private InputMethodManager mImm;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_left, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_left, container, false);
+        titleEditText = (EditText) rootView.findViewById(R.id.title_edit_text);
+        contentEditText = (EditText) rootView.findViewById(R.id.content_edit_text);
+        return rootView;
     }
 
     @Override
@@ -78,8 +52,32 @@ public class LeftFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mImm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set the focus on the title edit text and show the keyboard
+        titleEditText.requestFocus();
+        mImm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Clear focus and hide the soft keyboard
+        titleEditText.clearFocus();
+        contentEditText.clearFocus();
+        mImm.hideSoftInputFromWindow(contentEditText.getWindowToken(), 0);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
+        mImm = null;
     }
 
     public void createStory() {
