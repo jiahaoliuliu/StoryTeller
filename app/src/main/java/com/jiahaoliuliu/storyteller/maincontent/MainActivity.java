@@ -53,6 +53,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
     // Content and layouts
     private StaggeredGridView mStoriesGridView;
     private SimpleCursorAdapter mSimpleCursorAdapter;
+    private LeftFragment mLeftFragment;
     private RightFragment mRightFragment;
     // The list of the view ids where the data goes
     private int[] to = {R.id.title_text_view, R.id.content_text_view};
@@ -83,6 +84,9 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         mStoriesGridView = (StaggeredGridView)findViewById(R.id.stories_grid_view);
 
         mFragmentManager = getSupportFragmentManager();
+        mLeftFragment = new LeftFragment();
+        mFragmentManager.beginTransaction().add(R.id.drawer_left_frame_layout, mLeftFragment).commit();
+
         mRightFragment = new RightFragment();
         mFragmentManager.beginTransaction().add(R.id.drawer_right_frame_layout, mRightFragment).commit();
 
@@ -186,6 +190,14 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                     }
                     mDrawerLayout.openDrawer(mRightFrameLayout);
                 }
+                return true;
+            case MENU_ITEM_NEW_STORY_ACCEPT_ID:
+                mLeftFragment.createStory();
+                mDrawerLayout.closeDrawer(mLeftFrameLayout);
+                return true;
+            case MENU_ITEM_NEW_STORY_CANCEL_ID:
+                mLeftFragment.cancelStory();
+                mDrawerLayout.closeDrawer(mLeftFrameLayout);
                 return true;
         }
         return super.onOptionsItemSelected(item);
