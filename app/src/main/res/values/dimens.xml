@@ -8,5 +8,8 @@
 
     <!-- Drawer -->
     <dimen name="drawer_width">240dp</dimen>
+    <dimen name="drawer_horizontal_margin">10dp</dimen>
+    <dimen name="drawer_vertical_margin">10dp</dimen>
+
 
 </resources>

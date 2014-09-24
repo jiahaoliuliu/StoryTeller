@@ -13,10 +13,11 @@
     <string name="error_linking">Some error happens. Could you try to login with Facebook again</string>
 
     <!-- Main screen -->
-    <string name="logout_button">Logout</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="story_title">Title</string>
+    <string name="story_title_hint">Story in few words</string>
     <string name="story_content">Content</string>
+    <string name="story_content_hint">Tell us the complete story</string>
+    <string name="logout_button">Logout</string>
 
     <!-- Main screen Action bar -->
     <string name="action_bar_right_drawer">Right drawer</string>

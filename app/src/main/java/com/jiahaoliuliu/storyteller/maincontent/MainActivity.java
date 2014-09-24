@@ -107,6 +107,8 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                     Log.v(TAG, "Right drawer closed");
                 }
                 addActionBarMenuItems();
+                // Close the soft keyboard in case it is open
+                imm.hideSoftInputFromWindow(mLeftFrameLayout.getWindowToken(), 0);
             }
 
             @Override
