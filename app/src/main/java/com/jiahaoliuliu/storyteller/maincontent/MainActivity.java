@@ -26,6 +26,7 @@ import com.etsy.android.grid.StaggeredGridView;
 import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.database.StoryDataLayer;
+import com.jiahaoliuliu.storyteller.interfaces.OnCreateStoryRequestedListener;
 import com.jiahaoliuliu.storyteller.model.Story;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -36,7 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends BaseSessionActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MainActivity extends BaseSessionActivity implements
+        LoaderManager.LoaderCallbacks<Cursor>, OnCreateStoryRequestedListener{
 
     private static final String TAG = "MainActivity";
 
@@ -194,8 +196,10 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                 }
                 return true;
             case MENU_ITEM_NEW_STORY_ACCEPT_ID:
-                mLeftFragment.createStory();
-                mDrawerLayout.closeDrawer(mLeftFrameLayout);
+                // If the story was created correctly, the close the drawer
+                if (mLeftFragment.createStory()) {
+                    mDrawerLayout.closeDrawer(mLeftFrameLayout);
+                }
                 return true;
             case MENU_ITEM_NEW_STORY_CANCEL_ID:
                 mLeftFragment.cancelStory();
@@ -381,5 +385,10 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader loader) {
         Log.w(TAG, "Loader reset");
+    }
+
+    @Override
+    public void requestCreateStory(String title, String Content) {
+        // TODO: Implement this
     }
 }

@@ -32,4 +32,8 @@
     <string name="open_right_drawer">Options</string>
     <string name="title_activity_search">SearchActivity</string>
 
+    <!-- Drawer Left -->
+    <string name="warning_title_empty">You must provide a title for the story</string>
+    <string name="warning_content_empty">You must provide a content for the story</string>
+
 </resources>
