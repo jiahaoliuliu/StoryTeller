@@ -40,7 +40,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
 
     private static final String TAG = "MainActivity";
 
-    private static final int MENU_ITEM_RIGHT_LIST_ID = 10000;
+    private static final int MENU_ITEM_RIGHT_DRAWER_ID = 10000;
     private static final int MENU_ITEM_SEARCH_ID = 10001;
 
     private static final int LOADER_ID = 1;
@@ -64,6 +64,9 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
     // System
     private InputMethodManager imm;
 
+    // The menu for the action bar
+    private Menu mMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,10 +89,12 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
 
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
+                addActionBarMenuItems();
             }
 
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                createActionBarItemForDrawer();
             }
         };
 
@@ -123,11 +128,49 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         });
     }
 
+    // =================================================  Action bar ====================================================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mMenu = menu;
+        addActionBarMenuItems();
+        return true;
+    }
 
-        // ActionBar search view
-        MenuItem searchMenuItem = menu.add(Menu.NONE, MENU_ITEM_SEARCH_ID, Menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_ITEM_RIGHT_DRAWER_ID :
+                if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
+                    mDrawerLayout.closeDrawer(mRightFrameLayout);
+                } else {
+                    mDrawerLayout.openDrawer(mRightFrameLayout);
+                }
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void addActionBarMenuItems() {
+        // First remove all the items left
+        if (mMenu == null) {
+            throw new IllegalArgumentException("The mMenu cannot be null");
+        }
+
+        mMenu.clear();
+
+        // Then add each one of the items
+        addActionBarMenuSearchItem();
+        addActionBarMenuDrawerItem();
+    }
+
+    private void addActionBarMenuSearchItem() {
+        // If the search item has not been added in the menu, add it
+        if (mMenu.findItem(MENU_ITEM_SEARCH_ID) != null) {
+            Log.w(TAG, "The search item has been already added in the action bar");
+            return;
+        }
+
+        MenuItem searchMenuItem = mMenu.add(Menu.NONE, MENU_ITEM_SEARCH_ID, Menu
                 .NONE, R.string.action_bar_search)
                 .setIcon(R.drawable.ic_action_search)
                 .setActionView(R.layout.search_layout);
@@ -162,6 +205,8 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
             public boolean onMenuItemActionExpand(MenuItem item) {
                 searchEditText.requestFocus();
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                // Remove all the other items in the menu
+                mMenu.removeItem(MENU_ITEM_RIGHT_DRAWER_ID);
                 return true;
             }
 
@@ -170,33 +215,39 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                 searchEditText.setText("");
                 searchEditText.clearFocus();
                 imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                addActionBarMenuItems();
                 return true;
             }
         });
-
-        // The icon to open the right drawer. This icon
-        // must be shown always, and it must be placed
-        // on the rightest place of the action bar
-        menu.add(Menu.NONE, MENU_ITEM_RIGHT_LIST_ID, Menu
-                .NONE, R.string.action_bar_right_drawer)
-                .setIcon(R.drawable.ic_navigation_drawer)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS );
-        return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case MENU_ITEM_RIGHT_LIST_ID :
-                if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
-                    mDrawerLayout.closeDrawer(mRightFrameLayout);
-                } else {
-                    mDrawerLayout.openDrawer(mRightFrameLayout);
-                }
-                return true;
+    private void addActionBarMenuDrawerItem () {
+        // If the drawer item has already been added in the menu, not do anything
+        if (mMenu.findItem(MENU_ITEM_RIGHT_DRAWER_ID) != null) {
+            Log.w(TAG, "The drawer item has been already added in the action bar");
+            return;
         }
-        return super.onOptionsItemSelected(item);
+
+        // This icon must be shown always, and it must be placed
+        // on the rightest place of the action bar
+        mMenu.add(Menu.NONE, MENU_ITEM_RIGHT_DRAWER_ID, Menu
+                .NONE, R.string.open_right_drawer)
+                .setIcon(R.drawable.ic_navigation_drawer)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM );
     }
+
+    private void createActionBarItemForDrawer() {
+        if (mMenu == null) {
+            Log.e(TAG, "The drawer is open but the menu has not created. This shouldn't happens");
+            return;
+        }
+
+        // First remove all the items
+        mMenu.clear();
+        addActionBarMenuDrawerItem();
+    }
+
+    // ==================================================================================================================
 
     @Override
     public Loader onCreateLoader(int i, Bundle bundle) {

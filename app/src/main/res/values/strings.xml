@@ -25,6 +25,7 @@
     <!-- Drawer -->
     <string name="drawer_open">Drawer open</string>
     <string name="drawer_close">Drawer closed</string>
+    <string name="open_right_drawer">Options</string>
     <string name="title_activity_search">SearchActivity</string>
 
 </resources>
