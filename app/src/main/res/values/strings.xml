@@ -22,6 +22,8 @@
     <string name="action_bar_right_drawer">Right drawer</string>
     <string name="action_bar_search">Search</string>
     <string name="action_bar_new_story">New story</string>
+    <string name="action_bar_new_story_accept">Create</string>
+    <string name="action_bar_new_story_cancel">Cancel</string>
 
     <!-- Drawer -->
     <string name="drawer_open">Drawer open</string>

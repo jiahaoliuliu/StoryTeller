@@ -44,6 +44,10 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
     private static final int MENU_ITEM_SEARCH_ID = 10001;
     private static final int MENU_ITEM_NEW_STORY_ID = 10002;
 
+    // Special icons to create a new story
+    private static final int MENU_ITEM_NEW_STORY_ACCEPT_ID = 10003;
+    private static final int MENU_ITEM_NEW_STORY_CANCEL_ID = 10004;
+
     private static final int LOADER_ID = 1;
 
     // Content and layouts
@@ -106,10 +110,11 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                 super.onDrawerOpened(drawerView);
                 if (drawerView.equals(mLeftFrameLayout)) {
                     Log.v(TAG, "Left drawer opened");
+                    createActionBarItemForLeftDrawer();
                 } else if (drawerView.equals(mRightFrameLayout)) {
                     Log.v(TAG, "Right drawer opened");
+                    createActionBarItemForRightDrawer();
                 }
-                createActionBarItemForDrawer();
             }
         };
 
@@ -287,7 +292,33 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM );
     }
 
-    private void createActionBarItemForDrawer() {
+    private void addActionBarMenuNewStoryAcceptItem() {
+        // If the item has already been added in the menu, not do anything
+        if (mMenu.findItem(MENU_ITEM_NEW_STORY_ACCEPT_ID) != null) {
+            Log.w(TAG, "The new story accept item has been already added in the action bar");
+            return;
+        }
+
+        mMenu.add(Menu.NONE, MENU_ITEM_NEW_STORY_ACCEPT_ID, Menu
+                .NONE, R.string.action_bar_new_story_accept)
+                .setIcon(R.drawable.ic_action_accept)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    }
+
+    private void addActionBarMenuNewStoryCancelItem() {
+        // If the item has already been added in the menu, not do anything
+        if (mMenu.findItem(MENU_ITEM_NEW_STORY_CANCEL_ID) != null) {
+            Log.w(TAG, "The new story cancel item has been already added in the action bar");
+            return;
+        }
+
+        mMenu.add(Menu.NONE, MENU_ITEM_NEW_STORY_CANCEL_ID, Menu
+                .NONE, R.string.action_bar_new_story_cancel)
+                .setIcon(R.drawable.ic_action_cancel)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    }
+
+    private void createActionBarItemForRightDrawer() {
         if (mMenu == null) {
             Log.e(TAG, "The drawer is open but the menu has not created. This shouldn't happens");
             return;
@@ -296,6 +327,18 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         // First remove all the items
         mMenu.clear();
         addActionBarMenuDrawerItem();
+    }
+
+    private void createActionBarItemForLeftDrawer() {
+        if (mMenu == null) {
+            Log.e(TAG, "The drawer is open but the menu has not created. This shouldn't happens");
+            return;
+        }
+
+        // First remove all the items
+        mMenu.clear();
+        addActionBarMenuNewStoryAcceptItem();
+        addActionBarMenuNewStoryCancelItem();
     }
 
     // ==================================================================================================================
