@@ -42,6 +42,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
 
     private static final int MENU_ITEM_RIGHT_DRAWER_ID = 10000;
     private static final int MENU_ITEM_SEARCH_ID = 10001;
+    private static final int MENU_ITEM_NEW_STORY_ID = 10002;
 
     private static final int LOADER_ID = 1;
 
@@ -159,6 +160,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         mMenu.clear();
 
         // Then add each one of the items
+        addActionBarMenuNewStoryItem();
         addActionBarMenuSearchItem();
         addActionBarMenuDrawerItem();
     }
@@ -207,6 +209,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 // Remove all the other items in the menu
                 mMenu.removeItem(MENU_ITEM_RIGHT_DRAWER_ID);
+                mMenu.removeItem(MENU_ITEM_NEW_STORY_ID);
                 return true;
             }
 
@@ -233,6 +236,19 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         mMenu.add(Menu.NONE, MENU_ITEM_RIGHT_DRAWER_ID, Menu
                 .NONE, R.string.open_right_drawer)
                 .setIcon(R.drawable.ic_navigation_drawer)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM );
+    }
+
+    private void addActionBarMenuNewStoryItem() {
+        // If the item has already been added in the menu, not do anything
+        if (mMenu.findItem(MENU_ITEM_NEW_STORY_ID) != null) {
+            Log.w(TAG, "The new story item has been already added in the action bar");
+            return;
+        }
+
+        mMenu.add(Menu.NONE, MENU_ITEM_NEW_STORY_ID, Menu
+                .NONE, R.string.action_bar_new_story)
+                .setIcon(R.drawable.ic_action_story_new)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM );
     }
 
