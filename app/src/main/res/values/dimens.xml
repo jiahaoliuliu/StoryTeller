@@ -6,4 +6,7 @@
     <dimen name="element_vertical_margin">8dp</dimen>
     <dimen name="element_horizontal_margin">8dp</dimen>
 
+    <!-- Drawer -->
+    <dimen name="drawer_width">240dp</dimen>
+
 </resources>

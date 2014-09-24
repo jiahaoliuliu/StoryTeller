@@ -55,6 +55,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
 
     // Drawers
     private DrawerLayout mDrawerLayout;
+    private FrameLayout mLeftFrameLayout;
     private FrameLayout mRightFrameLayout;
     private FragmentManager mFragmentManager;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -82,19 +83,32 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         mFragmentManager.beginTransaction().add(R.id.drawer_right_frame_layout, mRightFragment).commit();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mLeftFrameLayout = (FrameLayout) findViewById(R.id.drawer_left_frame_layout);
         mRightFrameLayout = (FrameLayout) findViewById(R.id.drawer_right_frame_layout);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_navigation_drawer,
                 R.string.drawer_open, R.string.drawer_close) {
 
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                if (drawerView.equals(mLeftFrameLayout)) {
+                    Log.v(TAG, "Left drawer closed");
+                } else if (drawerView.equals(mRightFrameLayout)) {
+                    Log.v(TAG, "Right drawer closed");
+                }
                 addActionBarMenuItems();
             }
 
+            @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                if (drawerView.equals(mLeftFrameLayout)) {
+                    Log.v(TAG, "Left drawer opened");
+                } else if (drawerView.equals(mRightFrameLayout)) {
+                    Log.v(TAG, "Right drawer opened");
+                }
                 createActionBarItemForDrawer();
             }
         };
@@ -140,10 +154,31 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case MENU_ITEM_NEW_STORY_ID:
+                // If the right drawer was open, close it
+                if (mDrawerLayout.isDrawerOpen(mLeftFrameLayout)) {
+                    mDrawerLayout.closeDrawer(mLeftFrameLayout);
+                    // If the left drawer was closed, check if
+                    // the left drawer is open. If so, close the left drawer
+                    // Then opens the right drawer
+                } else {
+                    if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
+                        mDrawerLayout.closeDrawer(mRightFrameLayout);
+                    }
+                    mDrawerLayout.openDrawer(mLeftFrameLayout);
+                }
+                return true;
             case MENU_ITEM_RIGHT_DRAWER_ID :
+                // If the right drawer was open, close it
                 if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
                     mDrawerLayout.closeDrawer(mRightFrameLayout);
+                // If the left drawer was closed, check if
+                // the left drawer is open. If so, close the left drawer
+                // Then opens the right drawer
                 } else {
+                    if (mDrawerLayout.isDrawerOpen(mLeftFrameLayout)) {
+                        mDrawerLayout.closeDrawer(mLeftFrameLayout);
+                    }
                     mDrawerLayout.openDrawer(mRightFrameLayout);
                 }
                 return true;

@@ -16,18 +16,18 @@
         />
 
     <!-- the left drawer -->
-    <!-- For not it is hidden
     <FrameLayout
         android:id="@+id/drawer_left_frame_layout"
-        android:layout_width="240dp"
+        android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#EEEEEE"
         />
-    -->
 
     <!-- the right drawer -->
     <FrameLayout
         android:id="@+id/drawer_right_frame_layout"
-        android:layout_width="240dp"
+        android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:background="#EEEEEE"
