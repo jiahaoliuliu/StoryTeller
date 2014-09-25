@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.FrameLayout;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.jiahaoliuliu.storyteller.R;
@@ -32,6 +33,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,10 +70,11 @@ public class MainActivity extends BaseSessionActivity implements
     private ActionBarDrawerToggle mDrawerToggle;
 
     // Internal data
-    private List<Story> mAllStories;
+    private StoryDataLayer mStoryDataLayer;
 
     // System
     private InputMethodManager mImm;
+    private LoaderManager mLoaderManager;
 
     // The menu for the action bar
     private Menu mMenu;
@@ -81,11 +84,16 @@ public class MainActivity extends BaseSessionActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // System
         mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mLoaderManager = getSupportLoaderManager();
+        mFragmentManager = getSupportFragmentManager();
 
+        mStoryDataLayer = StoryDataLayer.getInstance();
+
+        // layouts
         mStoriesGridView = (StaggeredGridView)findViewById(R.id.stories_grid_view);
 
-        mFragmentManager = getSupportFragmentManager();
         mLeftFragment = new LeftFragment();
         mFragmentManager.beginTransaction().add(R.id.drawer_left_frame_layout, mLeftFragment).commit();
 
@@ -136,22 +144,19 @@ public class MainActivity extends BaseSessionActivity implements
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if (parseObjects != null) {
                     Log.v(TAG, "Stories retrieved from the parse");
-                    mAllStories = new ArrayList<Story>();
-                    StoryDataLayer storyDataLayer = StoryDataLayer.getInstance();
                     for (ParseObject parseObject: parseObjects) {
                         try {
                             Story tmpStory = new Story(parseObject);
                             Log.v(TAG, tmpStory.toString());
-                            mAllStories.add(tmpStory);
                             // Save the data persistently to be used for specific situations
                             // such as search or off-line mode
-                            storyDataLayer.insertOrUpdateStory(tmpStory);
+                            mStoryDataLayer.insertOrUpdateStory(tmpStory);
                         } catch (IllegalArgumentException illegalArgumentException) {
                             Log.w(TAG, "Error getting stories from the Parse ", illegalArgumentException);
                         }
                     }
                 }
-                getSupportLoaderManager().initLoader(LOADER_ID, null, MainActivity.this);
+                mLoaderManager.initLoader(LOADER_ID, null, MainActivity.this);
             }
         });
     }
@@ -376,7 +381,7 @@ public class MainActivity extends BaseSessionActivity implements
         mSimpleCursorAdapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence constraint) {
-                return StoryDataLayer.getInstance().searchStoryByText(constraint.toString());
+                return mStoryDataLayer.searchStoryByText(constraint.toString());
             }
         });
         setSupportProgressBarIndeterminateVisibility(false);
@@ -388,7 +393,25 @@ public class MainActivity extends BaseSessionActivity implements
     }
 
     @Override
-    public void requestCreateStory(String title, String Content) {
-        // TODO: Implement this
+    public void requestCreateStory(String title, String content) {
+        setSupportProgressBarIndeterminateVisibility(true);
+        final ParseObject newStoryParseObject = new ParseObject(Story.STORY_KEY);
+        newStoryParseObject.put(Story.TITLE_KEY, title);
+        newStoryParseObject.put(Story.CONTENT_KEY, content);
+        newStoryParseObject.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Story newStory = new Story(newStoryParseObject);
+                    mStoryDataLayer.insertOrUpdateStory(newStory);
+                    mLoaderManager.restartLoader(LOADER_ID, null, MainActivity.this);
+                    Toast.makeText(MainActivity.this, R.string.story_saved_correctly, Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "Error saving the parse object", e);
+                    Toast.makeText(MainActivity.this, R.string.error_saving_story, Toast.LENGTH_LONG).show();
+                    setSupportProgressBarIndeterminateVisibility(false);
+                }
+            }
+        });
     }
 }
