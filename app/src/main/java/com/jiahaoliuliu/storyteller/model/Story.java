@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.parse.ParseObject;
 
+import org.w3c.dom.Text;
+
 /**
  * Story is a model which contains two fields: Title and content. It also contains the key of both
  * fields as public static variable
@@ -45,6 +47,9 @@ public class Story {
     public Story(ParseObject parseObject) {
         // Get the id first
         _id = parseObject.getObjectId();
+        if (TextUtils.isEmpty(_id)) {
+            throw new IllegalArgumentException("The parse object must has the id");
+        }
 
         String title = parseObject.getString(TITLE_KEY);
         if (TextUtils.isEmpty(title)) {

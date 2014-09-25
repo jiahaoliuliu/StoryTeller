@@ -21,48 +21,60 @@ import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.FrameLayout;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.database.StoryDataLayer;
+import com.jiahaoliuliu.storyteller.interfaces.OnCreateStoryRequestedListener;
 import com.jiahaoliuliu.storyteller.model.Story;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends BaseSessionActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MainActivity extends BaseSessionActivity implements
+        LoaderManager.LoaderCallbacks<Cursor>, OnCreateStoryRequestedListener{
 
     private static final String TAG = "MainActivity";
 
     private static final int MENU_ITEM_RIGHT_DRAWER_ID = 10000;
     private static final int MENU_ITEM_SEARCH_ID = 10001;
+    private static final int MENU_ITEM_NEW_STORY_ID = 10002;
+
+    // Special icons to create a new story
+    private static final int MENU_ITEM_NEW_STORY_ACCEPT_ID = 10003;
+    private static final int MENU_ITEM_NEW_STORY_CANCEL_ID = 10004;
 
     private static final int LOADER_ID = 1;
 
     // Content and layouts
     private StaggeredGridView mStoriesGridView;
     private SimpleCursorAdapter mSimpleCursorAdapter;
+    private LeftFragment mLeftFragment;
     private RightFragment mRightFragment;
     // The list of the view ids where the data goes
     private int[] to = {R.id.title_text_view, R.id.content_text_view};
 
     // Drawers
     private DrawerLayout mDrawerLayout;
+    private FrameLayout mLeftFrameLayout;
     private FrameLayout mRightFrameLayout;
     private FragmentManager mFragmentManager;
     private ActionBarDrawerToggle mDrawerToggle;
 
     // Internal data
-    private List<Story> mAllStories;
+    private StoryDataLayer mStoryDataLayer;
 
     // System
-    private InputMethodManager imm;
+    private InputMethodManager mImm;
+    private LoaderManager mLoaderManager;
 
     // The menu for the action bar
     private Menu mMenu;
@@ -72,29 +84,53 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        // System
+        mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mLoaderManager = getSupportLoaderManager();
+        mFragmentManager = getSupportFragmentManager();
 
+        mStoryDataLayer = StoryDataLayer.getInstance();
+
+        // layouts
         mStoriesGridView = (StaggeredGridView)findViewById(R.id.stories_grid_view);
 
-        mFragmentManager = getSupportFragmentManager();
+        mLeftFragment = new LeftFragment();
+        mFragmentManager.beginTransaction().add(R.id.drawer_left_frame_layout, mLeftFragment).commit();
+
         mRightFragment = new RightFragment();
         mFragmentManager.beginTransaction().add(R.id.drawer_right_frame_layout, mRightFragment).commit();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mLeftFrameLayout = (FrameLayout) findViewById(R.id.drawer_left_frame_layout);
         mRightFrameLayout = (FrameLayout) findViewById(R.id.drawer_right_frame_layout);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_navigation_drawer,
                 R.string.drawer_open, R.string.drawer_close) {
 
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                if (drawerView.equals(mLeftFrameLayout)) {
+                    Log.v(TAG, "Left drawer closed");
+                } else if (drawerView.equals(mRightFrameLayout)) {
+                    Log.v(TAG, "Right drawer closed");
+                }
                 addActionBarMenuItems();
+                // Close the soft keyboard in case it is open
+                mImm.hideSoftInputFromWindow(mLeftFrameLayout.getWindowToken(), 0);
             }
 
+            @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                createActionBarItemForDrawer();
+                if (drawerView.equals(mLeftFrameLayout)) {
+                    Log.v(TAG, "Left drawer opened");
+                    createActionBarItemForLeftDrawer();
+                } else if (drawerView.equals(mRightFrameLayout)) {
+                    Log.v(TAG, "Right drawer opened");
+                    createActionBarItemForRightDrawer();
+                }
             }
         };
 
@@ -108,22 +144,19 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if (parseObjects != null) {
                     Log.v(TAG, "Stories retrieved from the parse");
-                    mAllStories = new ArrayList<Story>();
-                    StoryDataLayer storyDataLayer = StoryDataLayer.getInstance();
                     for (ParseObject parseObject: parseObjects) {
                         try {
                             Story tmpStory = new Story(parseObject);
                             Log.v(TAG, tmpStory.toString());
-                            mAllStories.add(tmpStory);
                             // Save the data persistently to be used for specific situations
                             // such as search or off-line mode
-                            storyDataLayer.insertOrUpdateStory(tmpStory);
+                            mStoryDataLayer.insertOrUpdateStory(tmpStory);
                         } catch (IllegalArgumentException illegalArgumentException) {
                             Log.w(TAG, "Error getting stories from the Parse ", illegalArgumentException);
                         }
                     }
                 }
-                getSupportLoaderManager().initLoader(LOADER_ID, null, MainActivity.this);
+                mLoaderManager.initLoader(LOADER_ID, null, MainActivity.this);
             }
         });
     }
@@ -139,12 +172,43 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case MENU_ITEM_NEW_STORY_ID:
+                // If the right drawer was open, close it
+                if (mDrawerLayout.isDrawerOpen(mLeftFrameLayout)) {
+                    mDrawerLayout.closeDrawer(mLeftFrameLayout);
+                    // If the left drawer was closed, check if
+                    // the left drawer is open. If so, close the left drawer
+                    // Then opens the right drawer
+                } else {
+                    if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
+                        mDrawerLayout.closeDrawer(mRightFrameLayout);
+                    }
+                    mDrawerLayout.openDrawer(mLeftFrameLayout);
+                }
+                return true;
             case MENU_ITEM_RIGHT_DRAWER_ID :
+                // If the right drawer was open, close it
                 if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
                     mDrawerLayout.closeDrawer(mRightFrameLayout);
+                // If the left drawer was closed, check if
+                // the left drawer is open. If so, close the left drawer
+                // Then opens the right drawer
                 } else {
+                    if (mDrawerLayout.isDrawerOpen(mLeftFrameLayout)) {
+                        mDrawerLayout.closeDrawer(mLeftFrameLayout);
+                    }
                     mDrawerLayout.openDrawer(mRightFrameLayout);
                 }
+                return true;
+            case MENU_ITEM_NEW_STORY_ACCEPT_ID:
+                // If the story was created correctly, the close the drawer
+                if (mLeftFragment.createStory()) {
+                    mDrawerLayout.closeDrawer(mLeftFrameLayout);
+                }
+                return true;
+            case MENU_ITEM_NEW_STORY_CANCEL_ID:
+                mLeftFragment.cancelStory();
+                mDrawerLayout.closeDrawer(mLeftFrameLayout);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -159,6 +223,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         mMenu.clear();
 
         // Then add each one of the items
+        addActionBarMenuNewStoryItem();
         addActionBarMenuSearchItem();
         addActionBarMenuDrawerItem();
     }
@@ -204,9 +269,10 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 searchEditText.requestFocus();
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                mImm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 // Remove all the other items in the menu
                 mMenu.removeItem(MENU_ITEM_RIGHT_DRAWER_ID);
+                mMenu.removeItem(MENU_ITEM_NEW_STORY_ID);
                 return true;
             }
 
@@ -214,7 +280,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 searchEditText.setText("");
                 searchEditText.clearFocus();
-                imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                mImm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
                 addActionBarMenuItems();
                 return true;
             }
@@ -236,7 +302,46 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM );
     }
 
-    private void createActionBarItemForDrawer() {
+    private void addActionBarMenuNewStoryItem() {
+        // If the item has already been added in the menu, not do anything
+        if (mMenu.findItem(MENU_ITEM_NEW_STORY_ID) != null) {
+            Log.w(TAG, "The new story item has been already added in the action bar");
+            return;
+        }
+
+        mMenu.add(Menu.NONE, MENU_ITEM_NEW_STORY_ID, Menu
+                .NONE, R.string.action_bar_new_story)
+                .setIcon(R.drawable.ic_action_story_new)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM );
+    }
+
+    private void addActionBarMenuNewStoryAcceptItem() {
+        // If the item has already been added in the menu, not do anything
+        if (mMenu.findItem(MENU_ITEM_NEW_STORY_ACCEPT_ID) != null) {
+            Log.w(TAG, "The new story accept item has been already added in the action bar");
+            return;
+        }
+
+        mMenu.add(Menu.NONE, MENU_ITEM_NEW_STORY_ACCEPT_ID, Menu
+                .NONE, R.string.action_bar_new_story_accept)
+                .setIcon(R.drawable.ic_action_accept)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    }
+
+    private void addActionBarMenuNewStoryCancelItem() {
+        // If the item has already been added in the menu, not do anything
+        if (mMenu.findItem(MENU_ITEM_NEW_STORY_CANCEL_ID) != null) {
+            Log.w(TAG, "The new story cancel item has been already added in the action bar");
+            return;
+        }
+
+        mMenu.add(Menu.NONE, MENU_ITEM_NEW_STORY_CANCEL_ID, Menu
+                .NONE, R.string.action_bar_new_story_cancel)
+                .setIcon(R.drawable.ic_action_cancel)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    }
+
+    private void createActionBarItemForRightDrawer() {
         if (mMenu == null) {
             Log.e(TAG, "The drawer is open but the menu has not created. This shouldn't happens");
             return;
@@ -245,6 +350,18 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         // First remove all the items
         mMenu.clear();
         addActionBarMenuDrawerItem();
+    }
+
+    private void createActionBarItemForLeftDrawer() {
+        if (mMenu == null) {
+            Log.e(TAG, "The drawer is open but the menu has not created. This shouldn't happens");
+            return;
+        }
+
+        // First remove all the items
+        mMenu.clear();
+        addActionBarMenuNewStoryAcceptItem();
+        addActionBarMenuNewStoryCancelItem();
     }
 
     // ==================================================================================================================
@@ -264,7 +381,7 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
         mSimpleCursorAdapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence constraint) {
-                return StoryDataLayer.getInstance().searchStoryByText(constraint.toString());
+                return mStoryDataLayer.searchStoryByText(constraint.toString());
             }
         });
         setSupportProgressBarIndeterminateVisibility(false);
@@ -273,5 +390,28 @@ public class MainActivity extends BaseSessionActivity implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader loader) {
         Log.w(TAG, "Loader reset");
+    }
+
+    @Override
+    public void requestCreateStory(String title, String content) {
+        setSupportProgressBarIndeterminateVisibility(true);
+        final ParseObject newStoryParseObject = new ParseObject(Story.STORY_KEY);
+        newStoryParseObject.put(Story.TITLE_KEY, title);
+        newStoryParseObject.put(Story.CONTENT_KEY, content);
+        newStoryParseObject.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Story newStory = new Story(newStoryParseObject);
+                    mStoryDataLayer.insertOrUpdateStory(newStory);
+                    mLoaderManager.restartLoader(LOADER_ID, null, MainActivity.this);
+                    Toast.makeText(MainActivity.this, R.string.story_saved_correctly, Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "Error saving the parse object", e);
+                    Toast.makeText(MainActivity.this, R.string.error_saving_story, Toast.LENGTH_LONG).show();
+                    setSupportProgressBarIndeterminateVisibility(false);
+                }
+            }
+        });
     }
 }

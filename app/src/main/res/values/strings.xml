@@ -13,19 +13,30 @@
     <string name="error_linking">Some error happens. Could you try to login with Facebook again</string>
 
     <!-- Main screen -->
-    <string name="logout_button">Logout</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="story_title">Title</string>
+    <string name="story_title_hint">Story in few words</string>
     <string name="story_content">Content</string>
+    <string name="story_content_hint">Tell us the complete story</string>
+    <string name="logout_button">Logout</string>
 
     <!-- Main screen Action bar -->
     <string name="action_bar_right_drawer">Right drawer</string>
     <string name="action_bar_search">Search</string>
+    <string name="action_bar_new_story">New story</string>
+    <string name="action_bar_new_story_accept">Create</string>
+    <string name="action_bar_new_story_cancel">Cancel</string>
 
     <!-- Drawer -->
     <string name="drawer_open">Drawer open</string>
     <string name="drawer_close">Drawer closed</string>
     <string name="open_right_drawer">Options</string>
     <string name="title_activity_search">SearchActivity</string>
+
+    <!-- Drawer Left -->
+    <string name="warning_title_empty">You must provide a title for the story</string>
+    <string name="warning_content_empty">You must provide a content for the story</string>
+    <string name="story_saved_correctly">The story has been saved correctly</string>
+    <string name="error_saving_story">There was some problem saving the story. Please check your internet connection and try it later.</string>
+
 
 </resources>
