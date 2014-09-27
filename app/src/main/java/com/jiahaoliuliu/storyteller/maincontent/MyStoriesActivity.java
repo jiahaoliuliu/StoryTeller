@@ -12,6 +12,7 @@ import android.widget.SimpleCursorAdapter;
 import com.etsy.android.grid.StaggeredGridView;
 import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
+import com.jiahaoliuliu.storyteller.interfaces.OnShareStoryRequestedListener;
 import com.jiahaoliuliu.storyteller.maincontent.loaders.FillStoriesByAuthorCursorLoader;
 import com.jiahaoliuliu.storyteller.utils.Preferences;
 
@@ -70,7 +71,7 @@ public class MyStoriesActivity extends BaseSessionActivity
         Log.v(TAG, cursor.getCount() + " stories retrieved");
 
         mCustomCursorAdapter = new CustomCursorAdapter(MyStoriesActivity.this, R.layout.story_layout,
-                cursor, MainDatabase.TableStory.COLUMNS_SHOWN, to, 0);
+                cursor, MainDatabase.TableStory.COLUMNS_SHOWN, to, 0, this);
         mStoriesGridView.setAdapter(mCustomCursorAdapter);
         mCustomCursorAdapter.notifyDataSetChanged();
         setSupportProgressBarIndeterminate(false);

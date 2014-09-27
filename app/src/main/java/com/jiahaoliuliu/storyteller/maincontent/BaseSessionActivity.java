@@ -13,13 +13,15 @@ import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.interfaces.OnExitRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSessionRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSetProgressBarIndeterminateRequested;
+import com.jiahaoliuliu.storyteller.interfaces.OnShareStoryRequestedListener;
+import com.jiahaoliuliu.storyteller.model.Story;
 import com.jiahaoliuliu.storyteller.utils.Preferences;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
 
 public class BaseSessionActivity extends ActionBarActivity implements OnExitRequestedListener,
-        OnSessionRequestedListener, OnSetProgressBarIndeterminateRequested {
+        OnSessionRequestedListener, OnSetProgressBarIndeterminateRequested, OnShareStoryRequestedListener {
 
     private static final String TAG = "BaseSessionActivity";
     Session mSession;
@@ -81,4 +83,8 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
         setProgressBarIndeterminate(setProgressBarIndeterminate);
     }
 
+    @Override
+    public void requestShareStory(Story story) {
+        Log.d(TAG, "Story to be shared " + story.toString());
+    }
 }

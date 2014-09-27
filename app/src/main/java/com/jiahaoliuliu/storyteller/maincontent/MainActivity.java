@@ -27,6 +27,7 @@ import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.database.StoryDataLayer;
 import com.jiahaoliuliu.storyteller.interfaces.OnCreateStoryRequestedListener;
+import com.jiahaoliuliu.storyteller.interfaces.OnShareStoryRequestedListener;
 import com.jiahaoliuliu.storyteller.maincontent.loaders.FillAllStoriesCursorLoader;
 import com.jiahaoliuliu.storyteller.model.Story;
 import com.parse.FindCallback;
@@ -39,7 +40,8 @@ import java.util.List;
 
 
 public class MainActivity extends BaseSessionActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>, OnCreateStoryRequestedListener{
+        LoaderManager.LoaderCallbacks<Cursor>, OnCreateStoryRequestedListener,
+        OnShareStoryRequestedListener {
 
     private static final String TAG = "MainActivity";
 
@@ -374,7 +376,7 @@ public class MainActivity extends BaseSessionActivity implements
     public void onLoadFinished(Loader loader, Cursor cursor) {
         Log.v(TAG, "Cursor retrieved");
         mCustomCursorAdapter = new CustomCursorAdapter(MainActivity.this, R.layout.story_layout,
-                cursor, MainDatabase.TableStory.COLUMNS_SHOWN, to, 0);
+                cursor, MainDatabase.TableStory.COLUMNS_SHOWN, to, 0, this);
         mStoriesGridView.setAdapter(mCustomCursorAdapter);
 
         mCustomCursorAdapter.setFilterQueryProvider(new FilterQueryProvider() {
