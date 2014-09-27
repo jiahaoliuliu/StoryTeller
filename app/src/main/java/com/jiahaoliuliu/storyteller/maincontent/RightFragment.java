@@ -1,6 +1,9 @@
 package com.jiahaoliuliu.storyteller.maincontent;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.Request;
@@ -19,6 +23,9 @@ import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.interfaces.OnExitRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSessionRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSetProgressBarIndeterminateRequested;
+
+import java.io.IOException;
+import java.net.URL;
 
 public class RightFragment extends Fragment {
     private static final String TAG = "RightFragment";
@@ -38,6 +45,7 @@ public class RightFragment extends Fragment {
     private OnSetProgressBarIndeterminateRequested onSetProgressBarIndeterminateRequested;
 
     // Layouts
+    private ImageView mUserProfileImageView;
     private TextView mUsernameTextView;
     private Button mFacebookLogoutButton;
 
@@ -100,6 +108,7 @@ public class RightFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_right, container, false);
+        mUserProfileImageView = (ImageView)view.findViewById(R.id.user_profile_image_view);
         mUsernameTextView = (TextView)view.findViewById(R.id.user_name_text_view);
         mFacebookLogoutButton = (Button)view.findViewById(R.id.facebook_logout_button);
         mFacebookLogoutButton.setOnClickListener(onclickListener);
@@ -119,6 +128,12 @@ public class RightFragment extends Fragment {
             @Override
             public void onCompleted(GraphUser user, Response response) {
                 if (user != null) {
+                    try {
+                        URL userImageUrl = new URL("https://graph.facebook.com/" + user.getId() + "/picture");
+                        new GetProfilePictureTask().execute(new URL[]{userImageUrl});
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error getting the user profile picture", e);
+                    }
                     mUsernameTextView.setText(user.getName());
                 } else {
                     Log.e(TAG, "Error on request facebook user " + response);
@@ -145,4 +160,27 @@ public class RightFragment extends Fragment {
             }
         }
     };
+
+    private class GetProfilePictureTask extends AsyncTask<URL, Integer, Void> {
+        private Bitmap mImageBitMap;
+
+        @Override
+        protected Void doInBackground(URL... urls) {
+            try {
+                mImageBitMap = BitmapFactory.decodeStream(urls[0].openConnection().getInputStream());
+            } catch (IOException e) {
+                Log.e(TAG, "Error getting the user profile picture", e);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (mImageBitMap != null) {
+                mUserProfileImageView.setImageBitmap(mImageBitMap);
+            }
+        }
+    }
 }
