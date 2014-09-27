@@ -32,6 +32,14 @@ public class StoryDao {
         return mDatabase.query(TableStory.TABLE_NAME, TableStory.COLUMNS, null, null, null, null, null);
     }
 
+    public Cursor queryAllStoriesByAuthor(String author) {
+        return mDatabase.query(
+                TableStory.TABLE_NAME,
+                TableStory.COLUMNS,
+                TableStory.AUTHOR + "=?",
+                new String[] {author}, null, null, null);
+    }
+
     public boolean insertOrUpdateStory(Story story) {
         if (story == null) {
             throw new IllegalArgumentException("Trying to insert or update a story while the story is null");

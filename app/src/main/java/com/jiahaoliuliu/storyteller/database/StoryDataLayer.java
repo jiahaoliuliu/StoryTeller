@@ -29,6 +29,10 @@ public class StoryDataLayer {
         return mStoryDao.queryAllStories();
     }
 
+    public Cursor getStoriesByAuthor(String author) {
+        return mStoryDao.queryAllStoriesByAuthor(author);
+    }
+
     public boolean insertOrUpdateStory(Story story) {
         Log.v(TAG, "Inserting or updating the story " + story);
         return mStoryDao.insertOrUpdateStory(story);

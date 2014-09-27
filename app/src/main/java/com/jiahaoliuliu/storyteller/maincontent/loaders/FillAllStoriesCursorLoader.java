@@ -1,4 +1,4 @@
-package com.jiahaoliuliu.storyteller.maincontent;
+package com.jiahaoliuliu.storyteller.maincontent.loaders;
 
 import android.content.Context;
 import android.database.Cursor;

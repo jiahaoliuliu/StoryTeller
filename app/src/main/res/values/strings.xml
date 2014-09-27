@@ -44,4 +44,6 @@
     <string name="item_logout">Logout</string>
     <string name="title_activity_my_stories">My stories</string>
 
+    <!-- My Stories Activity -->
+    <string name="no_story_found">hmmm, it seems you haven\'t written down your own story.\n\nWhat are you waiting for?</string>
 </resources>
