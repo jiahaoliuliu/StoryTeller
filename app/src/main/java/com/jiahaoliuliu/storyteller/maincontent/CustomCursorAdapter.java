@@ -35,11 +35,11 @@ public class CustomCursorAdapter extends SimpleCursorAdapter{
     public void bindView(View view, Context context, Cursor cursor) {
         super.bindView(view, context, cursor);
         final String rowId = cursor.getString(cursor.getColumnIndex("_id"));
-        final ImageButton favouriteImageButton = (ImageButton) view.findViewById(R.id.favourite_image_button);
-        favouriteImageButton.setOnClickListener(new View.OnClickListener() {
+        final ImageButton shareImageButton = (ImageButton) view.findViewById(R.id.share_image_button);
+        shareImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v(TAG, "Favourite button clicked for the row " + rowId);
+                Log.v(TAG, "Share button clicked for the row " + rowId);
             }
         });
     }

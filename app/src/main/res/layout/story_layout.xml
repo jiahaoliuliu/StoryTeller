@@ -39,11 +39,11 @@
         />
 
     <ImageButton
-        android:id="@+id/favourite_image_button"
+        android:id="@+id/share_image_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@drawable/ic_no_favourite"
+        android:src="@drawable/ic_share"
         android:background="@android:color/white"
         />
 </LinearLayout>
