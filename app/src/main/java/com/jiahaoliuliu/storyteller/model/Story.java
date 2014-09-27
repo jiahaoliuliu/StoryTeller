@@ -4,8 +4,6 @@ import android.text.TextUtils;
 
 import com.parse.ParseObject;
 
-import org.w3c.dom.Text;
-
 /**
  * Story is a model which contains two fields: Title and content. It also contains the key of both
  * fields as public static variable
@@ -28,20 +26,27 @@ public class Story {
      * The key for the title of the story. The title cannot be null
      */
     public static final String TITLE_KEY = "Title";
-    private String title;
+    private String mTitle;
 
     /**
      * The key for the content of the story. The content cannot be null
      */
     public static final String CONTENT_KEY = "Content";
-    private String content;
+    private String mContent;
+
+    /**
+     * The key for the author of the story. The author cannot be null
+     */
+    public static final String AUTHOR_KEY = "Author";
+    private String mAuthor;
 
     public Story() {}
 
-    public Story(String _id, String title, String content) {
+    public Story(String _id, String title, String content, String author) {
         this._id = _id;
-        this.title = title;
-        this.content = content;
+        this.mTitle = title;
+        this.mContent = content;
+        this.mAuthor = author;
     }
 
     public Story(ParseObject parseObject) {
@@ -51,17 +56,26 @@ public class Story {
             throw new IllegalArgumentException("The parse object must has the id");
         }
 
+        // Title
         String title = parseObject.getString(TITLE_KEY);
         if (TextUtils.isEmpty(title)) {
             throw new IllegalArgumentException("The parse object must has the title");
         }
-        this.title = title;
+        this.mTitle = title;
 
+        // Content
         String content = parseObject.getString(CONTENT_KEY);
         if (TextUtils.isEmpty(content)) {
             throw new IllegalArgumentException("The parse object must has the content");
         }
-        this.content = content;
+        this.mContent = content;
+
+        // Author
+        String author = parseObject.getString(AUTHOR_KEY);
+        if (TextUtils.isEmpty(author)) {
+            throw new IllegalArgumentException("The parse object must has the author");
+        }
+        this.mAuthor = author;
     }
 
     public String get_id() {
@@ -73,19 +87,27 @@ public class Story {
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public String getContent() {
-        return content;
+        return mContent;
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.mContent = content;
+    }
+
+    public String getAuthor() {
+        return mAuthor;
+    }
+
+    public void setAuthor(String author) {
+        this.mAuthor = author;
     }
 
     @Override
@@ -96,8 +118,10 @@ public class Story {
         Story story = (Story) o;
 
         if (_id != null ? !_id.equals(story._id) : story._id != null) return false;
-        if (content != null ? !content.equals(story.content) : story.content != null) return false;
-        if (title != null ? !title.equals(story.title) : story.title != null) return false;
+        if (mAuthor != null ? !mAuthor.equals(story.mAuthor) : story.mAuthor != null) return false;
+        if (mContent != null ? !mContent.equals(story.mContent) : story.mContent != null)
+            return false;
+        if (mTitle != null ? !mTitle.equals(story.mTitle) : story.mTitle != null) return false;
 
         return true;
     }
@@ -105,8 +129,9 @@ public class Story {
     @Override
     public int hashCode() {
         int result = _id != null ? _id.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (mTitle != null ? mTitle.hashCode() : 0);
+        result = 31 * result + (mContent != null ? mContent.hashCode() : 0);
+        result = 31 * result + (mAuthor != null ? mAuthor.hashCode() : 0);
         return result;
     }
 
@@ -114,8 +139,9 @@ public class Story {
     public String toString() {
         return "Story{" +
                 "_id='" + _id + '\'' +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
+                ", Title='" + mTitle + '\'' +
+                ", Content='" + mContent + '\'' +
+                ", Author='" + mAuthor + '\'' +
                 '}';
     }
 }

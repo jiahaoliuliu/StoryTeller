@@ -38,5 +38,12 @@
     <string name="story_saved_correctly">The story has been saved correctly</string>
     <string name="error_saving_story">There was some problem saving the story. Please check your internet connection and try it later.</string>
 
+    <!-- Drawer Right -->
+    <string name="item_my_stories">My stories</string>
+    <string name="item_favourite">Favourite</string>
+    <string name="item_logout">Logout</string>
+    <string name="title_activity_my_stories">My stories</string>
 
+    <!-- My Stories Activity -->
+    <string name="no_story_found">hmmm, it seems you haven\'t written down your own story.\n\nWhat are you waiting for?</string>
 </resources>

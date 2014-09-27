@@ -28,6 +28,7 @@ import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.database.StoryDataLayer;
 import com.jiahaoliuliu.storyteller.interfaces.OnCreateStoryRequestedListener;
+import com.jiahaoliuliu.storyteller.maincontent.loaders.FillAllStoriesCursorLoader;
 import com.jiahaoliuliu.storyteller.model.Story;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -35,7 +36,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -393,11 +393,12 @@ public class MainActivity extends BaseSessionActivity implements
     }
 
     @Override
-    public void requestCreateStory(String title, String content) {
+    public void requestCreateStory(Story story) {
         setSupportProgressBarIndeterminateVisibility(true);
         final ParseObject newStoryParseObject = new ParseObject(Story.STORY_KEY);
-        newStoryParseObject.put(Story.TITLE_KEY, title);
-        newStoryParseObject.put(Story.CONTENT_KEY, content);
+        newStoryParseObject.put(Story.TITLE_KEY, story.getTitle());
+        newStoryParseObject.put(Story.CONTENT_KEY, story.getContent());
+        newStoryParseObject.put(Story.AUTHOR_KEY, story.getAuthor());
         newStoryParseObject.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -405,6 +406,7 @@ public class MainActivity extends BaseSessionActivity implements
                     Story newStory = new Story(newStoryParseObject);
                     mStoryDataLayer.insertOrUpdateStory(newStory);
                     mLoaderManager.restartLoader(LOADER_ID, null, MainActivity.this);
+                    mLeftFragment.onStorySuccessfulCreated();
                     Toast.makeText(MainActivity.this, R.string.story_saved_correctly, Toast.LENGTH_SHORT).show();
                 } else {
                     Log.e(TAG, "Error saving the parse object", e);

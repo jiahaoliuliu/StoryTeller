@@ -26,7 +26,7 @@ public class MainDatabase {
     /**
      * The actual version of the database.
      */
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     private static class SingletonHolder {
         private static final OpenDbHelper INSTANCE = new OpenDbHelper(MainApplication.getsInstance());
@@ -62,13 +62,20 @@ public class MainDatabase {
          */
         public static final String CONTENT = "Content";
 
+        /**
+         * The person who has created the story. In user name
+         * of the parse user is used.
+         */
+        public static final String AUTHOR = "Author";
+
         public static final String CREATE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "( " +
                 _ID + " TEXT PRIMARY KEY NOT NULL, " +
                 TITLE + " TEXT NOT NULL, " +
-                CONTENT + " TEXT NOT NULL " +
+                CONTENT + " TEXT NOT NULL, " +
+                AUTHOR + " TEXT NOT NULL " +
                 ");";
 
-        public static final String[] COLUMNS = {_ID, TITLE, CONTENT};
+        public static final String[] COLUMNS = {_ID, TITLE, CONTENT, AUTHOR};
 
         /**
          * The list of columns of this table whom are going to be shown. Note that the column id is
