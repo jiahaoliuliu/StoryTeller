@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.interfaces.OnCreateStoryRequestedListener;
+import com.jiahaoliuliu.storyteller.model.Story;
+import com.jiahaoliuliu.storyteller.utils.Preferences;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +32,8 @@ public class LeftFragment extends Fragment {
     private InputMethodManager mImm;
 
     private OnCreateStoryRequestedListener onCreateStoryRequestedListener;
+
+    private Preferences preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,7 @@ public class LeftFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mImm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        preferences = Preferences.SingletonHolder.INSTANCE;
     }
 
     @Override
@@ -104,8 +109,22 @@ public class LeftFragment extends Fragment {
         }
 
         String content = contentEditText.getText().toString();
-        onCreateStoryRequestedListener.requestCreateStory(title, content);
+
+        Story newStory = new Story();
+        newStory.setTitle(title);
+        newStory.setContent(content);
+        newStory.setAuthor(preferences.getString(Preferences.StringId.PARSE_USER_NAME));
+        onCreateStoryRequestedListener.requestCreateStory(newStory);
         return true;
+    }
+
+    /**
+     * Special method called when the story has been successfully created.
+     * This is useful to do some clean stuffs
+     */
+    public void onStorySuccessfulCreated() {
+        titleEditText.setText("");
+        contentEditText.setText("");
     }
 
     public void cancelStory() {

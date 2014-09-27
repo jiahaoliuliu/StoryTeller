@@ -84,6 +84,7 @@ public class StoryDao {
         contentValues.put(TableStory._ID, story.get_id());
         contentValues.put(TableStory.TITLE, story.getTitle());
         contentValues.put(TableStory.CONTENT, story.getContent());
+        contentValues.put(TableStory.AUTHOR, story.getAuthor());
         return contentValues;
     }
 
