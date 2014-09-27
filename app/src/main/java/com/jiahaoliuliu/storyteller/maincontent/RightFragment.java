@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.facebook.Session;
@@ -143,19 +144,29 @@ public class RightFragment extends ListFragment {
     }
 
     @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        // Fix the position by discount the header count
+        int rightPosition = position - getListView().getHeaderViewsCount();
+        RightFragmentListItem itemClicked = RightFragmentListItem.values()[rightPosition];
+        // If the item has not been enabled, do not do anything
+        if (!itemClicked.isEnabled()) {
+            return;
+        }
+        switch (itemClicked) {
+            case MY_STORIES:
+                // TODO: Go to MyStories activity
+                break;
+            case FAVOURITES:
+                // TODO: Go to Favourites activity
+                break;
+            case LOGOUT:
+                onExitRequestedListener.requestExit();
+                break;
+        }
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
     }
-
-    private View.OnClickListener onclickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.facebook_logout_button:
-                    onExitRequestedListener.requestExit();
-                    break;
-            }
-        }
-    };
 }
