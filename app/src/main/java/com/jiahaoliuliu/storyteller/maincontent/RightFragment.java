@@ -2,6 +2,7 @@ package com.jiahaoliuliu.storyteller.maincontent;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
@@ -154,7 +155,8 @@ public class RightFragment extends ListFragment {
         }
         switch (itemClicked) {
             case MY_STORIES:
-                // TODO: Go to MyStories activity
+                Intent startMyStoriesActivityIntent = new Intent(getActivity(), MyStoriesActivity.class);
+                getActivity().startActivity(startMyStoriesActivityIntent);
                 break;
             case FAVOURITES:
                 // TODO: Go to Favourites activity

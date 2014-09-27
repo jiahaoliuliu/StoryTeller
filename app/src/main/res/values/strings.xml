@@ -42,5 +42,6 @@
     <string name="item_my_stories">My stories</string>
     <string name="item_favourite">Favourite</string>
     <string name="item_logout">Logout</string>
+    <string name="title_activity_my_stories">My stories</string>
 
 </resources>
