@@ -5,20 +5,24 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.model.GraphUser;
 import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.interfaces.OnExitRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSessionRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSetProgressBarIndeterminateRequested;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +36,9 @@ public class RightFragment extends ListFragment {
     private OnSetProgressBarIndeterminateRequested onSetProgressBarIndeterminateRequested;
 
     // Layouts
+    private View mListHeaderView;
     private ImageView mUserProfileImageView;
     private TextView mUsernameTextView;
-    private Button mFacebookLogoutButton;
 
     private enum RightFragmentListItem {
         MY_STORIES(R.string.item_my_stories, true),
@@ -100,15 +104,9 @@ public class RightFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        /*
-        View view = inflater.inflate(R.layout.fragment_right, container, false);
-        mUserProfileImageView = (ImageView)view.findViewById(R.id.user_profile_image_view);
-        mUsernameTextView = (TextView)view.findViewById(R.id.user_name_text_view);
-        mFacebookLogoutButton = (Button)view.findViewById(R.id.facebook_logout_button);
-        mFacebookLogoutButton.setOnClickListener(onclickListener);
-
-        // Inflate the layout for this fragment
-        */
+        mListHeaderView = inflater.inflate(R.layout.fragment_right_header, null);
+        mUserProfileImageView = (ImageView) mListHeaderView.findViewById(R.id.user_profile_image_view);
+        mUsernameTextView = (TextView) mListHeaderView.findViewById(R.id.user_name_text_view);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -116,13 +114,6 @@ public class RightFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayAdapter<String> arrayAdapter =
-                new ArrayAdapter<String>(
-                        getActivity(),
-                        android.R.layout.simple_list_item_1,
-                        RightFragmentListItem.getTitles(getActivity()));
-        setListAdapter(arrayAdapter);
-        /*
         mSession = onSessionRequestedListener.requestSession();
         // Request the user name
         onSetProgressBarIndeterminateRequested.setProgressBar(true);
@@ -140,7 +131,16 @@ public class RightFragment extends ListFragment {
                 onSetProgressBarIndeterminateRequested.setProgressBar(false);
             }
         }).executeAsync();
-        */
+
+        // The header must be added before set the adapter
+        getListView().addHeaderView(mListHeaderView);
+
+        ArrayAdapter<String> arrayAdapter =
+                new ArrayAdapter<String>(
+                        getActivity(),
+                        android.R.layout.simple_list_item_1,
+                        RightFragmentListItem.getTitles(getActivity()));
+        setListAdapter(arrayAdapter);
     }
 
     @Override
