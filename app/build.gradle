@@ -28,4 +28,5 @@ dependencies {
     // You must install or update the Support Repository through the SDK manager to use this dependency.
     compile 'com.android.support:support-v4:19.+'
     compile 'com.etsy.android.grid:library:1.0.5'
+    compile group:'com.squareup.picasso', name:'picasso', version:'2.3.4'
 }
