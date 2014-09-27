@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.facebook.Session;
 import com.jiahaoliuliu.storyteller.maincontent.MainActivity;
+import com.jiahaoliuliu.storyteller.utils.Preferences;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -52,6 +53,12 @@ public class LoginActivity extends ActionBarActivity {
                     public void done(final ParseUser parseUser, ParseException e) {
                         if (parseUser != null) {
                             Log.v(TAG, "User correctly authorized " + parseUser.getUsername());
+
+                            // Save the user name
+                            Preferences preferencesInstance = Preferences.SingletonHolder.INSTANCE;
+                            preferencesInstance.initialize(LoginActivity.this);
+                            preferencesInstance.setString(Preferences.StringId.PARSE_USER_NAME, parseUser.getUsername());
+
                             if (ParseFacebookUtils.isLinked(parseUser)) {
                                 Log.v(TAG, "Parse user linked correctly with facebook user. Going to main activity");
                                 goToMainActivity();

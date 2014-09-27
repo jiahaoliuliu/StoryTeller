@@ -13,6 +13,7 @@ import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.interfaces.OnExitRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSessionRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSetProgressBarIndeterminateRequested;
+import com.jiahaoliuliu.storyteller.utils.Preferences;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
@@ -22,6 +23,7 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
 
     private static final String TAG = "BaseSessionActivity";
     Session mSession;
+    Preferences mPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,15 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
             backToLoginActivity();
         }
 
+        // Set the preferences
+        mPreferences = Preferences.SingletonHolder.INSTANCE;
+        if (!mPreferences.hasBeenInitialized()) {
+            Log.v(TAG, "The preferences has not been initialized");
+            mPreferences.initialize(BaseSessionActivity.this);
+        }
+
+        // Log the user name
+        Log.v(TAG, mPreferences.getString(Preferences.StringId.PARSE_USER_NAME));
     }
 
     void backToLoginActivity() {

@@ -35,7 +35,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
