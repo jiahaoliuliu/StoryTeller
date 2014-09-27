@@ -129,7 +129,7 @@ public class RightFragment extends Fragment {
             public void onCompleted(GraphUser user, Response response) {
                 if (user != null) {
                     try {
-                        URL userImageUrl = new URL("https://graph.facebook.com/" + user.getId() + "/picture");
+                        URL userImageUrl = new URL("https://graph.facebook.com/" + user.getId() + "/picture?type=large");
                         new GetProfilePictureTask().execute(new URL[]{userImageUrl});
                     } catch (Exception e) {
                         Log.e(TAG, "Error getting the user profile picture", e);

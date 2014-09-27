@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/user_profile_image_view"
-        android:layout_width="200dp"
-        android:layout_height="200dp"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
         >
 
     <TextView
