@@ -148,6 +148,12 @@ public class RightFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Fix the position by discount the header count
         int rightPosition = position - getListView().getHeaderViewsCount();
+        // If the user has clicked on the header or on any other place which does not exists
+        // in the list, then not do anything
+        if (rightPosition < 0 || rightPosition >= RightFragmentListItem.values().length) {
+            return;
+        }
+
         RightFragmentListItem itemClicked = RightFragmentListItem.values()[rightPosition];
         // If the item has not been enabled, do not do anything
         if (!itemClicked.isEnabled()) {

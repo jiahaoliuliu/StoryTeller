@@ -162,6 +162,22 @@ public class MainActivity extends BaseSessionActivity implements
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Close all the drawers
+        if (mDrawerLayout.isDrawerOpen(mLeftFrameLayout)) {
+            mDrawerLayout.closeDrawer(mLeftFrameLayout);
+        }
+
+        if (mDrawerLayout.isDrawerOpen(mRightFrameLayout)) {
+            mDrawerLayout.closeDrawer(mRightFrameLayout);
+        }
+
+        // Close the soft keyboard in case it is open
+        mImm.hideSoftInputFromWindow(mLeftFrameLayout.getWindowToken(), 0);
+    }
+
     // =================================================  Action bar ====================================================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
