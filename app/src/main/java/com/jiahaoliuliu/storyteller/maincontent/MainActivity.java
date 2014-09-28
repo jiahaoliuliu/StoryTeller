@@ -20,7 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.FrameLayout;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
@@ -28,6 +27,7 @@ import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.database.StoryDataLayer;
 import com.jiahaoliuliu.storyteller.interfaces.OnCreateStoryRequestedListener;
+import com.jiahaoliuliu.storyteller.interfaces.OnShareStoryRequestedListener;
 import com.jiahaoliuliu.storyteller.maincontent.loaders.FillAllStoriesCursorLoader;
 import com.jiahaoliuliu.storyteller.model.Story;
 import com.parse.FindCallback;
@@ -40,7 +40,8 @@ import java.util.List;
 
 
 public class MainActivity extends BaseSessionActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>, OnCreateStoryRequestedListener{
+        LoaderManager.LoaderCallbacks<Cursor>, OnCreateStoryRequestedListener,
+        OnShareStoryRequestedListener {
 
     private static final String TAG = "MainActivity";
 
@@ -56,7 +57,7 @@ public class MainActivity extends BaseSessionActivity implements
 
     // Content and layouts
     private StaggeredGridView mStoriesGridView;
-    private SimpleCursorAdapter mSimpleCursorAdapter;
+    private CustomCursorAdapter mCustomCursorAdapter;
     private LeftFragment mLeftFragment;
     private RightFragment mRightFragment;
     // The list of the view ids where the data goes
@@ -257,8 +258,8 @@ public class MainActivity extends BaseSessionActivity implements
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (mSimpleCursorAdapter != null) {
-                    mSimpleCursorAdapter.getFilter().filter(s.toString());
+                if (mCustomCursorAdapter != null) {
+                    mCustomCursorAdapter.getFilter().filter(s.toString());
                 }
             }
         });
@@ -374,11 +375,11 @@ public class MainActivity extends BaseSessionActivity implements
     @Override
     public void onLoadFinished(Loader loader, Cursor cursor) {
         Log.v(TAG, "Cursor retrieved");
-        mSimpleCursorAdapter = new SimpleCursorAdapter(MainActivity.this, R.layout.story_layout,
-                cursor, MainDatabase.TableStory.COLUMNS_SHOWN, to, 0);
-        mStoriesGridView.setAdapter(mSimpleCursorAdapter);
+        mCustomCursorAdapter = new CustomCursorAdapter(MainActivity.this, R.layout.story_layout,
+                cursor, MainDatabase.TableStory.COLUMNS_SHOWN, to, 0, this);
+        mStoriesGridView.setAdapter(mCustomCursorAdapter);
 
-        mSimpleCursorAdapter.setFilterQueryProvider(new FilterQueryProvider() {
+        mCustomCursorAdapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence constraint) {
                 return mStoryDataLayer.searchStoryByText(constraint.toString());

@@ -12,11 +12,11 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:text="@string/story_title"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:paddingTop="@dimen/element_vertical_margin"
         android:paddingBottom="@dimen/element_vertical_margin"
         android:paddingLeft="@dimen/element_horizontal_margin"
         android:paddingRight="@dimen/element_horizontal_margin"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         />
 
     <TextView
@@ -25,10 +25,25 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:text="@string/story_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingTop="@dimen/element_vertical_margin"
         android:paddingBottom="@dimen/element_vertical_margin"
         android:paddingLeft="@dimen/element_horizontal_margin"
         android:paddingRight="@dimen/element_horizontal_margin"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/general_light_grey"
+        />
+
+    <ImageButton
+        android:id="@+id/share_image_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_share"
+        android:background="@android:color/white"
         />
 </LinearLayout>

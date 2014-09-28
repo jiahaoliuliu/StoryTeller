@@ -12,6 +12,7 @@ import android.widget.SimpleCursorAdapter;
 import com.etsy.android.grid.StaggeredGridView;
 import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
+import com.jiahaoliuliu.storyteller.interfaces.OnShareStoryRequestedListener;
 import com.jiahaoliuliu.storyteller.maincontent.loaders.FillStoriesByAuthorCursorLoader;
 import com.jiahaoliuliu.storyteller.utils.Preferences;
 
@@ -25,7 +26,7 @@ public class MyStoriesActivity extends BaseSessionActivity
     // Contents and layouts
     private ActionBar mActionBar;
     private StaggeredGridView mStoriesGridView;
-    private SimpleCursorAdapter mSimpleCursorAdapter;
+    private CustomCursorAdapter mCustomCursorAdapter;
     // The list of the view ids where the data goes
     private int[] to = {R.id.title_text_view, R.id.content_text_view};
 
@@ -69,10 +70,10 @@ public class MyStoriesActivity extends BaseSessionActivity
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         Log.v(TAG, cursor.getCount() + " stories retrieved");
 
-        mSimpleCursorAdapter = new SimpleCursorAdapter(MyStoriesActivity.this, R.layout.story_layout,
-                cursor, MainDatabase.TableStory.COLUMNS_SHOWN, to, 0);
-        mStoriesGridView.setAdapter(mSimpleCursorAdapter);
-        mSimpleCursorAdapter.notifyDataSetChanged();
+        mCustomCursorAdapter = new CustomCursorAdapter(MyStoriesActivity.this, R.layout.story_layout,
+                cursor, MainDatabase.TableStory.COLUMNS_SHOWN, to, 0, this);
+        mStoriesGridView.setAdapter(mCustomCursorAdapter);
+        mCustomCursorAdapter.notifyDataSetChanged();
         setSupportProgressBarIndeterminate(false);
     }
 

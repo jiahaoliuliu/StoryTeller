@@ -1,7 +1,9 @@
 package com.jiahaoliuliu.storyteller.model;
 
+import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.jiahaoliuliu.storyteller.database.MainDatabase.TableStory;
 import com.parse.ParseObject;
 
 /**
@@ -51,10 +53,11 @@ public class Story {
 
     public Story(ParseObject parseObject) {
         // Get the id first
-        _id = parseObject.getObjectId();
+        String _id = parseObject.getObjectId();
         if (TextUtils.isEmpty(_id)) {
             throw new IllegalArgumentException("The parse object must has the id");
         }
+        this._id = _id;
 
         // Title
         String title = parseObject.getString(TITLE_KEY);
@@ -76,6 +79,49 @@ public class Story {
             throw new IllegalArgumentException("The parse object must has the author");
         }
         this.mAuthor = author;
+    }
+
+    public Story(Cursor cursor) {
+        if (cursor == null) {
+            throw new IllegalArgumentException("The cursor where the data of the story is cannot be null");
+        }
+
+        if (cursor.isClosed()) {
+            throw new IllegalArgumentException("The cursor where the data of the story is cannot be closed");
+        }
+
+        if (cursor.isAfterLast()) {
+            throw new IllegalArgumentException("The cursor where the data of the story is cannot be after the last");
+        }
+
+        // _id
+        String _id = cursor.getString(cursor.getColumnIndex(TableStory._ID));
+        if (TextUtils.isEmpty(_id)) {
+            throw new IllegalArgumentException("The _id cannot be empty");
+        }
+        this._id = _id;
+
+        // Title
+        String title = cursor.getString(cursor.getColumnIndex(TableStory.TITLE));
+        if (TextUtils.isEmpty(title)) {
+            throw new IllegalArgumentException("The title cannot be empty");
+        }
+        this.mTitle = title;
+
+        // Content
+        String content = cursor.getString(cursor.getColumnIndex(TableStory.CONTENT));
+        if (TextUtils.isEmpty(content)) {
+            throw new IllegalArgumentException("The content cannot be empty");
+        }
+        this.mContent = content;
+
+        // Author
+        String author = cursor.getString(cursor.getColumnIndex(TableStory.AUTHOR));
+        if (TextUtils.isEmpty(author)) {
+            throw new IllegalArgumentException("The author cannot be empty");
+        }
+        this.mAuthor = author;
+
     }
 
     public String get_id() {
