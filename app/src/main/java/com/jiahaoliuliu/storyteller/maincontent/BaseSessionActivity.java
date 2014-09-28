@@ -6,9 +6,16 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.WebDialog;
 import com.jiahaoliuliu.storyteller.LoginActivity;
+import com.jiahaoliuliu.storyteller.R;
 import com.jiahaoliuliu.storyteller.database.MainDatabase;
 import com.jiahaoliuliu.storyteller.interfaces.OnExitRequestedListener;
 import com.jiahaoliuliu.storyteller.interfaces.OnSessionRequestedListener;
@@ -24,14 +31,17 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
         OnSessionRequestedListener, OnSetProgressBarIndeterminateRequested, OnShareStoryRequestedListener {
 
     private static final String TAG = "BaseSessionActivity";
+
     Session mSession;
     Preferences mPreferences;
+    UiLifecycleHelper uiHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         // First of all check if the user has logged in
         mSession = ParseFacebookUtils.getSession();
         if (mSession == null || !mSession.isOpened()) {
@@ -40,6 +50,9 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
             Log.e(TAG, "The user is in the main activity but the session has not opened. Going back to the login screen");
             backToLoginActivity();
         }
+
+        uiHelper = new UiLifecycleHelper(this, null);
+        uiHelper.onCreate(savedInstanceState);
 
         // Set the preferences
         mPreferences = Preferences.SingletonHolder.INSTANCE;
@@ -85,6 +98,89 @@ public class BaseSessionActivity extends ActionBarActivity implements OnExitRequ
 
     @Override
     public void requestShareStory(Story story) {
-        Log.d(TAG, "Story to be shared " + story.toString());
+        Log.v(TAG, "Request to share the story " + story);
+
+        // It uses the web version of the sharing dialog because there are
+        // problems with the native share dialog
+        Bundle params = new Bundle();
+        params.putString("name", story.getTitle());
+        params.putString("description", story.getContent());
+        params.putString("link", "https://play.google.com/store/apps/details?id=com.jiahaoliuliu.storyteller");
+        params.putString("picture", "https://raw.githubusercontent.com/jiahaoliuliu/StoryTeller/master/app/src/main/res/drawable-xxhdpi/ic_launcher.png");
+
+        WebDialog feedDialog = (
+                new WebDialog.FeedDialogBuilder(this,
+                        Session.getActiveSession(),
+                        params))
+                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                    @Override
+                    public void onComplete(Bundle values,
+                                           FacebookException error) {
+                        if (error == null) {
+                            // Show the publish status
+                            final String postId = values.getString("post_id");
+                            if (postId != null) {
+                                Toast.makeText(BaseSessionActivity.this,
+                                        R.string.publish_success, Toast.LENGTH_SHORT).show();
+                            } else {
+                                // User clicked the Cancel button
+                                Toast.makeText(BaseSessionActivity.this,
+                                        R.string.publish_cancelled, Toast.LENGTH_SHORT).show();
+                            }
+                        } else if (error instanceof FacebookOperationCanceledException) {
+                            // User clicked the "x" button
+                            Toast.makeText(BaseSessionActivity.this,
+                                    R.string.publish_cancelled, Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Generic, ex: network error
+                            Toast.makeText(BaseSessionActivity.this,
+                                    R.string.publish_error, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .build();
+        feedDialog.show();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        uiHelper.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        uiHelper.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        uiHelper.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
+            @Override
+            public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
+                Log.e("Activity", String.format("Error: %s", error.toString()));
+            }
+
+            @Override
+            public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
+                Log.i("Activity", "Success!");
+            }
+        });
     }
 }

@@ -40,10 +40,16 @@
 
     <!-- Drawer Right -->
     <string name="item_my_stories">My stories</string>
-    <string name="item_favourite">Favourite</string>
+    <string name="item_favourite">Favourite(Avaiable soon)</string>
     <string name="item_logout">Logout</string>
     <string name="title_activity_my_stories">My stories</string>
 
     <!-- My Stories Activity -->
     <string name="no_story_found">hmmm, it seems you haven\'t written down your own story.\n\nWhat are you waiting for?</string>
+
+    <!-- Facebook sharing -->
+    <string name="publish_success">The story has been successfully published on your Facebook wall</string>
+    <string name="publish_cancelled">Publish cancelled</string>
+    <string name="publish_error">Error publishing the story. Could you try it later?</string>
+
 </resources>
